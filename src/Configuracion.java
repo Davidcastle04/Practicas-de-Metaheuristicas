@@ -1,6 +1,8 @@
 
 import java.io.*;
 import java.security.InvalidParameterException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /*
@@ -71,7 +73,7 @@ public class Configuracion {
                             System.err.println("Valor de semilla inválido ignorado debido a que no es un LONG o un int: " + sem);
                         }
                     }
-                } else if (linea.startsWith("k_GRA=")) {
+                } else if (linea.startsWith("k-GRA=")) {
                     String[] partes = linea.substring("k_GRA=".length()).trim().split("\\s+");
                     for (String param : partes) {
                         try {
@@ -202,10 +204,25 @@ public class Configuracion {
         return new Dato(name, typeValue, dimension, comment, edgeWeightTypeValue, listaCoordenadas);
     }
 
-    private int funcionEvaluatoria(ArrayList<Tuple<Integer, Integer>> solucion) {
-        return 0;
-    }
+    public static double funcionEvaluatoria(Dato dato_original, ArrayList<Tuple<Integer, Integer>> solucion) {
+        double costeTotal = 0;
+        int n = solucion.size();
 
+        for (int i = 0; i < n; i++) {
+            int ciudadActual = solucion.get(i).first;
+            int ciudadSiguiente = solucion.get((i + 1) % n).first; // cierra el ciclo: última -> primera
+
+            Coordenadas c1 = dato_original.NODE_COORD_SECTION.get(ciudadActual);
+            Coordenadas c2 = dato_original.NODE_COORD_SECTION.get(ciudadSiguiente);
+
+            double dx = c1.x - c2.x;
+            double dy = c1.y - c2.y;
+
+            costeTotal += Math.round(Math.sqrt(dx * dx + dy * dy));
+        }
+
+        return costeTotal;
+    }
     void evaluacion(String tipo, ArrayList<String> otrosParametros, ArrayList<Long> semillas) {
 
 
@@ -216,7 +233,7 @@ public class Configuracion {
                 System.out.println("La funcion Evaluadora para el archivo " + archivoActual.getName());
                 ArrayList<Tuple<Integer, Integer>> resultado = new ArrayList<>();
                 resultado = AlgGRE_Clase05_Grupo03.Greedy(dato, archivoActual.getName());
-                System.out.println("\t->Resultado: " + funcionEvaluatoria(resultado));
+                System.out.println("\t->Resultado: " + funcionEvaluatoria(dato,resultado));
             }
             System.out.println("-----------------------------------------------------------------------");
             System.out.print("\u001B[0m");
@@ -234,7 +251,7 @@ public class Configuracion {
                         Dato dato = cargar(archivoActual);
                         System.out.println("La funcion Evaluadora para el archivo " + archivoActual.getName());
                         ArrayList<Tuple<Integer, Integer>> resultado = AlgGRA_Clase05_Grupo03.GreedyAleatorizado(dato, k_GRA, semilla, archivoActual.getName());
-                        System.out.println("\t->Resultado: " + funcionEvaluatoria(resultado));
+                        System.out.println("\t->Resultado: " + funcionEvaluatoria(dato,resultado));
                     }
                 }
             } else {
@@ -751,5 +768,81 @@ public class Configuracion {
             }
 
         }*/
+
+    public static class Logger {
+        private final String fileName;
+        private final StringBuilder log;
+        private final long startTime;
+
+        public Logger(String algorithmName, String dataset, Long semilla) {
+            this.startTime = System.currentTimeMillis();
+            this.log = new StringBuilder();
+
+            // Crear nombre del archivo con timestamp
+            LocalDateTime now = LocalDateTime.now();
+            String timestamp = now.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            this.fileName = String.format("logs/%s_%s_%d_%s.log",
+                    algorithmName,
+                    dataset,
+                    semilla != null ? semilla : 0,
+                    timestamp);
+
+            // Crear directorio de logs si no existe
+            new File("logs").mkdirs();
+
+            // Escribir cabecera
+            appendLine("=== PARÁMETROS DEL ALGORITMO ===");
+            appendLine("Algoritmo: " + algorithmName);
+            appendLine("Dataset: " + dataset);
+            appendLine("Semilla: " + semilla);
+            appendLine("Fecha y hora: " + now);
+            appendLine("==============================\n");
+        }
+
+        public void logInitialSolution(ArrayList<Integer> solution, double cost) {
+            appendLine("=== SOLUCIÓN INICIAL ===");
+            appendLine("Solución: " + solution);
+            appendLine("Coste: " + cost);
+            appendLine("=====================\n");
+        }
+
+        public void logChange(int i, int j, ArrayList<Integer> newSolution, double newCost, boolean improved) {
+            appendLine("=== CAMBIO EN LA SOLUCIÓN ===");
+            appendLine("Posiciones intercambiadas: " + i + " <-> " + j);
+            appendLine(improved ? "MEJORA" : "EMPEORA");
+            appendLine("Nueva solución: " + newSolution);
+            appendLine("Nuevo coste: " + newCost);
+            appendLine("=========================\n");
+        }
+
+        public void logFinalSolution(ArrayList<Tuple<Integer, Integer>> solution, double cost) {
+            long totalTime = System.currentTimeMillis() - startTime;
+            appendLine("=== SOLUCIÓN FINAL ===");
+            appendLine("Solución: " + solution);
+            appendLine("Coste final: " + cost);
+            appendLine("Tiempo total: " + totalTime + "ms");
+            appendLine("===================\n");
+
+            // Guardar el log en archivo
+            saveToFile();
+        }
+
+        // Forzar escritura del log actual en disco (útil para flushing por iteración)
+        public void flush() {
+            saveToFile();
+        }
+
+        public void appendLine(String line) {
+            log.append(line).append("\n");
+        }
+
+        private void saveToFile() {
+            try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
+                writer.print(log.toString());
+            } catch (IOException e) {
+                System.err.println("Error al guardar el log: " + e.getMessage());
+            }
+        }
+    }
 
 }

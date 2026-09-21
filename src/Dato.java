@@ -50,6 +50,11 @@ class Tuple<A, B> {
         this.first = first;
         this.second = second;
     }
+
+    @Override
+    public String toString() {
+        return "(" + first + ", " + second + ")";
+    }
 }
 
 /**

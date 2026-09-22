@@ -29,9 +29,10 @@ public class AlgGRA_Clase05_Grupo03 {
 
         //logger.appendLine("\nIniciando construcción greedy aleatorizada de la ruta...");
 
+        // Ordenar las ciudades disponibles por suma de distancias ascendente
+        ciudadesDisponibles.sort((a, b) -> Integer.compare(sumaDistancias.get(a), sumaDistancias.get(b)));
+
         for (int i = 0; i < tamMatriz; i++) {
-            // Ordenar las ciudades disponibles por suma de distancias ascendente
-            ciudadesDisponibles.sort((a, b) -> Integer.compare(sumaDistancias.get(a), sumaDistancias.get(b)));
 
             int kActual = Math.min(k, ciudadesDisponibles.size());
             int idxElegido = random.nextInt(kActual);
@@ -62,10 +63,9 @@ public class AlgGRA_Clase05_Grupo03 {
             Coordenadas ci = dato.NODE_COORD_SECTION.get(i);
             for (int j = 0; j < n; j++) {
                 Coordenadas cj = dato.NODE_COORD_SECTION.get(j);
-                euclideo e = new euclideo();
-                e.x = ci.x - cj.x;
-                e.y = ci.y - cj.y;
-                distancias[i][j] = e.aplicarformula();
+                double dx = ci.x - cj.x;
+                double dy = ci.y - cj.y;
+                distancias[i][j] = (int) Math.round(Math.sqrt(dx * dx + dy * dy));
             }
         }
         return distancias;

@@ -74,14 +74,14 @@ public class Configuracion {
                         }
                     }
                 } else if (linea.startsWith("k-GRA=")) {
-                    String[] partes = linea.substring("k_GRA=".length()).trim().split("\\s+");
+                    String[] partes = linea.substring("k-GRA=".length()).trim().split("\\s+");
                     for (String param : partes) {
                         try {
                             // Intenta convertir a Integer
                             int intVal = Integer.parseInt(param);
                             k_GRA = intVal;
                         } catch (NumberFormatException e1) {
-                            System.err.println("Error al parsear k_GRA: " + param);
+                            System.err.println("Error al parsear k-GRA: " + param);
                         }
                     }
                 }

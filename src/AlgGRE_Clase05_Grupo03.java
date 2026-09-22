@@ -67,10 +67,9 @@ public class AlgGRE_Clase05_Grupo03 {
             Coordenadas ci = dato.NODE_COORD_SECTION.get(i);
             for (int j = 0; j < n; j++) {
                 Coordenadas cj = dato.NODE_COORD_SECTION.get(j);
-                euclideo e = new euclideo();
-                e.x = ci.x - cj.x;
-                e.y = ci.y - cj.y;
-                distancias[i][j] = e.aplicarformula();
+                double dx = ci.x - cj.x;
+                double dy = ci.y - cj.y;
+                distancias[i][j] = (int) Math.round(Math.sqrt(dx * dx + dy * dy));
             }
         }
         return distancias;

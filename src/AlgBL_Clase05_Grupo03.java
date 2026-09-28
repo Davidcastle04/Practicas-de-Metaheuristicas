@@ -48,7 +48,6 @@ public class AlgBL_Clase05_Grupo03 {
                         int arcosNuevos = distancias[nodoAnteriorI][nodoJ] + distancias[nodoI][nodoSiguienteJ];
 
                         int delta = arcosNuevos - arcosDesaparecen;
-                        iteraciones++; // Cada vez que evaluamos un movimiento, sumamos una iteración
 
                         // PRIMER MEJOR: Si el delta es negativo, el movimiento reduce el coste y lo aplicamos INMEDIATAMENTE
                         if (delta < 0) {
@@ -58,7 +57,7 @@ public class AlgBL_Clase05_Grupo03 {
                             // Activamos ambos nodos en el DLB porque ahora su entorno ha cambiado y vuelve a ser prometedor
                             DLB[i] = 0;
                             DLB[j] = 0;
-
+                            iteraciones++; // Cada vez que evaluamos un movimiento, sumamos una iteración todo cada vez que se aplique, no al evaluar
                             improve_flag = true;
                             mejoraGlobal = true;
                             break;

@@ -18,6 +18,7 @@ public class Configuracion {
     Set<String> algoritmos;
     Set<Long> semilla;
     int k_GRA;
+    int iteracionesBL=1000;
 
     // Aquí el constructor que necesitaremos para rellenar los atributos
 
@@ -73,7 +74,16 @@ public class Configuracion {
                             System.err.println("Valor de semilla inválido ignorado debido a que no es un LONG o un int: " + sem);
                         }
                     }
-                } else if (linea.startsWith("k-GRA=")) {
+                }  else if (linea.startsWith("IteracionesBL=")) {
+                String valor = linea.substring("IteracionesBL=".length()).trim();
+                try {
+                        iteracionesBL = Integer.parseInt(valor);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error al parsear IteracionesBL: " + valor);
+                    }
+                }
+
+                else if (linea.startsWith("k-GRA=")) {
                     String[] partes = linea.substring("k-GRA=".length()).trim().split("\\s+");
                     for (String param : partes) {
                         try {
@@ -84,7 +94,9 @@ public class Configuracion {
                             System.err.println("Error al parsear k-GRA: " + param);
                         }
                     }
+
                 }
+
             }
 
             // Mostramos los datos del fichero de configuración
@@ -93,6 +105,7 @@ public class Configuracion {
             System.out.println("\tALGORITMOS --> " + getAlgoritmos());
             System.out.println("\tSEMILLAS --> " + getSemilla());
             System.out.println("\tk_GRA --> " + k_GRA);
+            System.out.println("\tIteracionesBL --> " + iteracionesBL);
             System.out.println("*********************************************************************");
             System.out.println("\u001B[0m");
 
@@ -257,6 +270,29 @@ public class Configuracion {
             } else {
                 System.err.printf("Error al leer parámetros del archivo %s, falta el parámetro 'k='\n", otrosParametros);
             }
+        }
+
+        if (tipo.equals("busquedaLocal")) {
+            System.out.println("\n\u001B[38;5;34m---------------------- EVALUACION BUSQUEDA LOCAL ----------------------");
+
+            for (File archivoActual : getArchivos()) {
+                System.out.println("La función Evaluadora para el archivo " + archivoActual.getName());
+                Dato dato = cargar(archivoActual);
+
+                if (!semillas.isEmpty()) {
+                    for (Long aLong : semillas) {
+                        System.out.println("\t-> La semilla utilizada para la solucion Inicial es: " + aLong);
+
+                        // USAMOS DIRECTAMENTE LAS VARIABLES GLOBALES k_GRA e iteracionesBL
+                        ArrayList<Tuple<Integer, Integer>> resultado = AlgBL_Clase05_Grupo03.BusquedaLocal(dato, k_GRA, aLong, archivoActual.getName(), iteracionesBL);
+
+                        // Opcional: imprimir el coste de la ruta
+                        System.out.printf("\t\t->Resultado Final: %.0f\n", funcionEvaluatoria(dato, resultado));
+                    }
+                }
+            }
+            System.out.println("-----------------------------------------------------------------------");
+            System.out.print("\u001B[0m");
         }
 
         System.out.print("\u001B[0m");

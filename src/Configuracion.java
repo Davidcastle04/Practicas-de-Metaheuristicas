@@ -233,7 +233,7 @@ public class Configuracion {
                 System.out.println("La funcion Evaluadora para el archivo " + archivoActual.getName());
                 ArrayList<Tuple<Integer, Integer>> resultado = new ArrayList<>();
                 resultado = AlgGRE_Clase05_Grupo03.Greedy(dato, archivoActual.getName());
-                System.out.println("\t->Resultado: " + funcionEvaluatoria(dato,resultado));
+                System.out.printf("\t->Resultado: %.0f\n", funcionEvaluatoria(dato,resultado));
             }
             System.out.println("-----------------------------------------------------------------------");
             System.out.print("\u001B[0m");
@@ -251,7 +251,7 @@ public class Configuracion {
                         Dato dato = cargar(archivoActual);
                         System.out.println("La funcion Evaluadora para el archivo " + archivoActual.getName());
                         ArrayList<Tuple<Integer, Integer>> resultado = AlgGRA_Clase05_Grupo03.GreedyAleatorizado(dato, k_GRA, semilla, archivoActual.getName());
-                        System.out.println("\t->Resultado: " + funcionEvaluatoria(dato,resultado));
+                        System.out.printf("\t->Resultado: %.0f\n", funcionEvaluatoria(dato,resultado));
                     }
                 }
             } else {

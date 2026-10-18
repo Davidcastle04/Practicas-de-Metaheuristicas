@@ -1,104 +1,99 @@
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Random;
 
 public class AlgBL_Clase05_Grupo03 {
 
     public static ArrayList<Tuple<Integer, Integer>> BusquedaLocal(Dato dato, int k, Long semilla, String Dataset, int maxIteraciones) {
         int n = dato.DIMENSION;
-        int[][] distancias = calcularMatrizDistancias(dato);
+        Distancias dist = Distancias.de(dato);
 
-        // Llamamos al Greedy Aleatorizado para generar la primera solución inicial
-        ArrayList<Tuple<Integer, Integer>> rutaActual = AlgGRA_Clase05_Grupo03.GreedyAleatorizado(dato,k,semilla,Dataset);
+        Logger logger = new Logger("BusquedaLocal", Dataset, semilla);
+        logger.parametro("k (greedy aleatorizado)", k);
+        logger.parametro("Iteraciones maximas", maxIteraciones);
+        logger.parametro("Entorno", "2-opt con DLB, primer mejor");
 
-        // Definimos el DLB
-        int[] DLB = new int[n];
+        // TODO -- Corregido Claude
+        // la solución inicial se saca con el mismo Random(semilla) que el greedy aleatorizado,
+        // así con la misma semilla parte de la misma ruta que GRA y que la tabú
+        Random random = (semilla == null) ? new Random() : new Random(semilla);
+        int[] ruta = Distancias.aArray(AlgGRA_Clase05_Grupo03.generarSolucion(dato, k, random));
 
-        // Incializamos el DLB a 0
-        for (int i = 0; i < n; i++) {
-            DLB[i] = 0;
-        }
+        double coste = dist.coste(ruta);
+        logger.solucionInicial(ruta, coste);
 
-        // Controlamos las condiciones de parada, y además sabemos si en una pasada completa hubo alguna mejora
+        // DLB indexado por ciudad: 0 = prometedora, 1 = no mirar
+        int[] dlb = new int[n];
+
         int iteraciones = 0;
         boolean mejoraGlobal = true;
 
-        // Usamos un While para detenermos cuando la condicion llegue
-        while (mejoraGlobal && iteraciones < maxIteraciones) {
-            mejoraGlobal = false;
+        // se acaba al llegar al máximo de iteraciones o al llegar a un óptimo local de verdad
+        while (iteraciones < maxIteraciones) {
+            boolean hayMejora = false;
+            boolean saltadas = false;
 
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n && iteraciones < maxIteraciones; i++) {
+                int ciudadI = ruta[i];
 
-                int ciudadI = rutaActual.get(i).first;
+                if (dlb[ciudadI] == 1) {
+                    saltadas = true;
+                    continue;
+                }
 
-                // Si DLB de la ciudad = 1, lo ignoramos porque no es prometedor
-                if (DLB[ciudadI] == 0) {
-                    boolean improve_flag = false;
+                boolean improveFlag = false;
 
-                    // Exploramos el vecindario invirtiendo desde 'i' hasta 'j' el otp
-                    for (int j = i + 1; j < n; j++) {
+                for (int j = i + 1; j < n; j++) {
+                    // invertir toda la ruta deja el mismo ciclo (problema simétrico)
+                    if (i == 0 && j == n - 1) continue;
 
-                        // como es simetrico, evitamos invertir por completo!!!!!!!!!!!!!!?=
-                        if (i == 0 && j == n - 1) continue;
+                    int ciudadJ = ruta[j];
+                    int anterior = ruta[(i - 1 + n) % n];
+                    int siguiente = ruta[(j + 1) % n];
 
-                        // FACTORIZACIÓN, solo los arcos diferentes
-                        int nodoAnteriorI = rutaActual.get((i - 1 + n) % n).first;
-                        int nodoI = rutaActual.get(i).first; // Esto es igual a ciudadI
-                        int nodoJ = rutaActual.get(j).first;
-                        int nodoSiguienteJ = rutaActual.get((j + 1) % n).first;
+                    // factorización: solo cambian dos arcos
+                    int arcosDesaparecen = dist.d(anterior, ciudadI) + dist.d(ciudadJ, siguiente);
+                    int arcosNuevos = dist.d(anterior, ciudadJ) + dist.d(ciudadI, siguiente);
+                    int delta = arcosNuevos - arcosDesaparecen;
 
-                        int arcosDesaparecen = distancias[nodoAnteriorI][nodoI] + distancias[nodoJ][nodoSiguienteJ];
-                        int arcosNuevos = distancias[nodoAnteriorI][nodoJ] + distancias[nodoI][nodoSiguienteJ];
+                    // primer mejor: el primer vecino que mejora se aplica ya
+                    if (delta < 0) {
+                        Distancias.invertir(ruta, i, j);
+                        coste += delta;
+                        iteraciones++;
 
-                        int delta = arcosNuevos - arcosDesaparecen;
+                        dlb[ciudadI] = 0;
+                        dlb[ciudadJ] = 0;
+                        improveFlag = true;
+                        hayMejora = true;
 
-                        // PRIMER MEJOR: Si el delta es negativo, el movimiento reduce el coste y lo aplicamos INMEDIATAMENTE
-                        if (delta < 0) {
-                            // Aplicamos el movimiento 2-opt (Invierte el subsegmento de i a j)
-                            Collections.reverse(rutaActual.subList(i, j + 1));
-
-                            // Activamos ambos NODOS (ciudades reales) en el DLB porque su entorno ha cambiado
-                            DLB[nodoI] = 0;
-                            DLB[nodoJ] = 0;
-
-                            iteraciones++; // Se mantiene aquí por directriz de los profesores
-                            improve_flag = true;
-                            mejoraGlobal = true;
-                            break;
-                        }
-
-                        // Verificación parada bucle interno
-                        if (iteraciones >= maxIteraciones) break;
+                        // TODO -- Corregido Claude
+                        // ahora cada movimiento aplicado se guarda en el log (una iteración = un movimiento)
+                        logger.iteracion(iteraciones, i, j, ciudadI, ciudadJ, delta, coste, ruta, null);
+                        break;
                     }
+                }
 
-                    // Si tras probar todas las combinaciones con 'j', esta ciudad 'ciudadI' no mejoró nada, la apagamos
-                    if (!improve_flag) {
-                        DLB[ciudadI] = 1;
-                    }
-
-                    if (iteraciones >= maxIteraciones) break;
+                if (!improveFlag) {
+                    dlb[ciudadI] = 1;
                 }
             }
-        }
-        return rutaActual;
-    }
 
-    /**
-     * Calcula la matriz de distancias euclídeas (Evitando crear objetos innecesarios)
-     */
-    private static int[][] calcularMatrizDistancias(Dato dato) {
-        int n = dato.DIMENSION;
-        int[][] distancias = new int[n][n];
-
-        for (int i = 0; i < n; i++) {
-            Coordenadas ci = dato.NODE_COORD_SECTION.get(i);
-            for (int j = 0; j < n; j++) {
-                Coordenadas cj = dato.NODE_COORD_SECTION.get(j);
-                double dx = ci.x - cj.x;
-                double dy = ci.y - cj.y;
-                distancias[i][j] = (int) Math.round(Math.sqrt(dx * dx + dy * dy));
+            // TODO -- Corregido Claude
+            // Antes se paraba en cuanto una pasada no mejoraba, pero con el DLB esa pasada se saltaba
+            // ciudades y se dejaba la búsqueda a medias (en a280 se quedaba en ~63% del óptimo con 184
+            // movimientos que aún mejoraban). Ahora, si hubo ciudades saltadas, se reactivan todas y
+            // se comprueba otra vez; solo se termina si una pasada completa no mejora nada.
+            if (!hayMejora) {
+                if (!saltadas) {
+                    break;
+                }
+                Arrays.fill(dlb, 0);
             }
         }
-        return distancias;
+
+        logger.finalizar(ruta, coste);
+
+        return dist.aTuplas(ruta);
     }
 }

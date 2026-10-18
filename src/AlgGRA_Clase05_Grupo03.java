@@ -4,70 +4,58 @@ import java.util.Random;
 public class AlgGRA_Clase05_Grupo03 {
 
     public static ArrayList<Tuple<Integer, Integer>> GreedyAleatorizado(Dato dato, int k, Long semilla, String archivoActual) {
-        //Configuracion.Logger logger = new Configuracion.Logger("GreedyAleatorizado", archivoActual, semilla);
-       // logger.appendLine("Parámetro k: " + k);
+        Logger logger = new Logger("GreedyAleatorizado", archivoActual, semilla);
+        logger.parametro("k", k);
 
-        Random random = new Random(semilla);
-        int tamMatriz = dato.DIMENSION;
-        int[][] distancias = calcularMatrizDistancias(dato);
+        Random random = (semilla == null) ? new Random() : new Random(semilla);
 
-        ArrayList<Integer> ciudadesDisponibles = new ArrayList<>();
-        ArrayList<Integer> sumaDistancias = new ArrayList<>();
+        ArrayList<Tuple<Integer, Integer>> resultado = construir(dato, k, random, logger);
 
-        //logger.appendLine("Calculando sumas de distancias al resto de ciudades...");
+        double costeFinal = Configuracion.funcionEvaluatoria(dato, resultado);
+        logger.finalizar(resultado, costeFinal);
 
-        for (int i = 0; i < tamMatriz; i++) {
-            int sum = 0;
-            for (int j = 0; j < tamMatriz; j++) {
-                sum += distancias[i][j];
-            }
-            ciudadesDisponibles.add(i);
-            sumaDistancias.add(sum);
-        }
-
-        ArrayList<Tuple<Integer, Integer>> Resultado = new ArrayList<>();
-
-        //logger.appendLine("\nIniciando construcción greedy aleatorizada de la ruta...");
-
-        // Ordenar las ciudades disponibles por suma de distancias ascendente
-        ciudadesDisponibles.sort((a, b) -> Integer.compare(sumaDistancias.get(a), sumaDistancias.get(b)));
-
-        for (int i = 0; i < tamMatriz; i++) {
-
-            int kActual = Math.min(k, ciudadesDisponibles.size());
-            int idxElegido = random.nextInt(kActual);
-            int ciudadElegida = ciudadesDisponibles.remove(idxElegido);
-            int distanciaElegida = sumaDistancias.get(ciudadElegida);
-
-            //logger.appendLine("Iteración " + i + ": elegida entre las " + kActual
-            //        + " mejores -> ciudad " + ciudadElegida + " (suma=" + distanciaElegida + ")");
-
-            Resultado.add(new Tuple<>(ciudadElegida, distanciaElegida));
-        }
-
-        double costeFinal = Configuracion.funcionEvaluatoria(dato, Resultado);
-        //logger.logFinalSolution(Resultado, costeFinal);
-
-        return Resultado;
+        return resultado;
     }
 
-    /**
-     * Calcula la matriz de distancias euclídeas entre todas las ciudades
-     * a partir de las coordenadas del Dato (formato TSPLIB, EUC_2D).
-     */
-    private static int[][] calcularMatrizDistancias(Dato dato) {
-        int n = dato.DIMENSION;
-        int[][] distancias = new int[n][n];
+    // TODO -- Corregido Claude
+    // Versión sin log para usarla como solución inicial de la búsqueda local y la tabú.
+    // Antes la BL llamaba a GreedyAleatorizado y se creaba un log de más en cada ejecución
+    public static ArrayList<Tuple<Integer, Integer>> generarSolucion(Dato dato, int k, Random random) {
+        return construir(dato, k, random, null);
+    }
 
+    private static ArrayList<Tuple<Integer, Integer>> construir(Dato dato, int k, Random random, Logger logger) {
+        // TODO -- Corregido Claude
+        // con k = 0 el nextInt de abajo daba una excepción rara, ahora avisa de qué pasa
+        if (k < 1) {
+            throw new IllegalArgumentException("k del greedy aleatorizado tiene que ser al menos 1 (valor: " + k + ")");
+        }
+
+        int n = dato.DIMENSION;
+        int[] sumas = Distancias.de(dato).sumas();
+
+        // ciudades ordenadas de menor a mayor suma de distancias
+        ArrayList<Integer> candidatas = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
-            Coordenadas ci = dato.NODE_COORD_SECTION.get(i);
-            for (int j = 0; j < n; j++) {
-                Coordenadas cj = dato.NODE_COORD_SECTION.get(j);
-                double dx = ci.x - cj.x;
-                double dy = ci.y - cj.y;
-                distancias[i][j] = (int) Math.round(Math.sqrt(dx * dx + dy * dy));
+            candidatas.add(i);
+        }
+        candidatas.sort((a, b) -> Integer.compare(sumas[a], sumas[b]));
+
+        ArrayList<Tuple<Integer, Integer>> resultado = new ArrayList<>(n);
+
+        for (int paso = 0; paso < n; paso++) {
+            // se elige al azar entre las k primeras que quedan y se quita de la lista
+            int kActual = Math.min(k, candidatas.size());
+            int posicion = random.nextInt(kActual);
+            int ciudad = candidatas.remove(posicion);
+
+            resultado.add(new Tuple<>(ciudad, sumas[ciudad]));
+
+            if (logger != null) {
+                logger.paso(paso, ciudad, sumas[ciudad], "(elegida entre las " + kActual + " mejores)");
             }
         }
-        return distancias;
+
+        return resultado;
     }
 }

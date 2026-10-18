@@ -1,32 +1,19 @@
-
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
-import java.util.Collections;
 
 public class AlgBT_Clase05_Grupo03 {
 
-    /*
-     * ============================================================
-     *                 BÚSQUEDA TABÚ PARA TSP
-     * ============================================================
-     *
-     * OBJETIVO:
-     * Encontrar una ruta de coste mínimo que visite todas las
-     * ciudades una sola vez y vuelva a la ciudad de origen.
-     *
-     * ESTRATEGIA:
-     *  1. Generamos una solución inicial mediante Greedy o GRA.
-     *  2. Exploramos el vecindario mediante movimientos 2-opt.
-     *  3. Utilizamos una lista tabú para evitar ciclos.
-     *  4. Aplicamos el criterio de aspiración.
-     *  5. Utilizamos DLB para reducir exploraciones innecesarias.
-     *  6. Diversificamos la búsqueda cuando hay estancamiento.
-     * ============================================================
-     */
+    // hasta este tamaño la matriz de memorias es un array normal, si no usamos un mapa
+    private static final int LIMITE_MATRIZ = 3000;
 
+    // TODO -- Corregido Claude
+    // El algoritmo estaba mal respecto al guión: tenía criterio de aspiración, usaba DLB para elegir
+    // el movimiento, no había reinicio por estancamiento ni MLP, y la tabú era una lista de posiciones.
+    // Se ha rehecho siguiendo el guión (MCP/MLP en una matriz cuadrada, oscilación estratégica, etc.)
     public static ArrayList<Tuple<Integer, Integer>> BusquedaTabu(
             Dato dato,
             Long semilla,
@@ -37,352 +24,330 @@ public class AlgBT_Clase05_Grupo03 {
             Double Esta,
             String Dataset) {
 
-        // --------------------------------------------------------
-        // 1. VALIDACIÓN DE PARÁMETROS
-        // --------------------------------------------------------
-
         if (dato == null || dato.NODE_COORD_SECTION == null) {
-            throw new IllegalArgumentException(
-                    "El dato o sus coordenadas no pueden ser nulos.");
+            throw new IllegalArgumentException("El dato o sus coordenadas no pueden ser nulos.");
         }
 
         int n = dato.DIMENSION;
 
-        if (n < 1 || dato.NODE_COORD_SECTION.size() != n) {
-            throw new IllegalArgumentException(
-                    "La dimensión no coincide con el número de coordenadas.");
+        if (n < 4 || dato.NODE_COORD_SECTION.size() != n) {
+            throw new IllegalArgumentException("La dimensión no coincide con el número de coordenadas.");
         }
 
-        if (maxIteraciones < 0 || Ten <= 0
+        if (k < 1 || maxIteraciones < 0 || Ten <= 0
                 || Osc == null || Esta == null
-                || !Double.isFinite(Osc)
-                || !Double.isFinite(Esta)
                 || Osc < 0.0 || Osc > 1.0
                 || Esta < 0.0 || Esta > 1.0) {
-
-            throw new IllegalArgumentException(
-                    "Parámetros de búsqueda tabú no válidos.");
+            throw new IllegalArgumentException("Parámetros de búsqueda tabú no válidos.");
         }
 
-        // --------------------------------------------------------
-        // 2. GENERADOR ALEATORIO
-        // --------------------------------------------------------
+        Random rnd = (semilla == null) ? new Random() : new Random(semilla);
+        Distancias dist = Distancias.de(dato);
 
-        Random rnd = (semilla == null || semilla == -1L)
-                ? new Random()
-                : new Random(semilla);
+        // nº de movimientos seguidos que no mejoran el mejor del momento para decir que se estancó
+        int maxEmpeoramientos = Math.max(1, (int) Math.round(Esta * maxIteraciones));
 
-        // --------------------------------------------------------
-        // 3. PRECALCULAR MATRIZ DE DISTANCIAS
-        // --------------------------------------------------------
+        Logger logger = new Logger("BusquedaTabu", Dataset, semilla);
+        logger.parametro("k (greedy aleatorizado)", k);
+        logger.parametro("Iteraciones maximas", maxIteraciones);
+        logger.parametro("Tenencia tabu", Ten);
+        logger.parametro("Oscilacion estrategica", Osc);
+        logger.parametro("Estancamiento", Esta + " (" + maxEmpeoramientos + " empeoramientos seguidos)");
 
-        int[][] distancias = calcularMatrizDistancias(dato);
+        // solución inicial: greedy aleatorizado con la misma semilla que usa la BL
+        int[] actual = Distancias.aArray(AlgGRA_Clase05_Grupo03.generarSolucion(dato, k, rnd));
+        double costeActual = dist.coste(actual);
 
-        // --------------------------------------------------------
-        // 4. GENERAR SOLUCIÓN INICIAL
-        // --------------------------------------------------------
+        int[] mejorMomento = actual.clone();
+        double costeMejorMomento = costeActual;
 
-        ArrayList<Tuple<Integer, Integer>> solucionActual;
+        int[] mejorGlobal = actual.clone();
+        double costeMejorGlobal = costeActual;
 
-        if (semilla == null || (semilla == -1L && k == -1)) {
+        logger.solucionInicial(actual, costeActual);
 
-            solucionActual = AlgGRE_Clase05_Grupo03.Greedy(
-                    dato, Dataset + "--BUSQUEDATABU-INICIAL");
+        // TODO -- Corregido Claude
+        // Una sola matriz cuadrada: por encima de la diagonal la MCP (tenencia de cada movimiento)
+        // y por debajo la MLP (veces que se ha usado cada arco)
+        MatrizMemoria memoria = new MatrizMemoria(n);
 
-        } else {
+        // movimientos tabú vivos {ciudadMenor, ciudadMayor, vida}, así no hay que recorrer toda la matriz
+        ArrayDeque<int[]> tabuVivos = new ArrayDeque<>();
 
-            solucionActual =
-                    AlgGRA_Clase05_Grupo03.GreedyAleatorizado(
-                            dato, k, semilla,
-                            Dataset + "--BUSQUEDATABU-INICIAL");
-        }
-
-        if (solucionActual == null || solucionActual.size() != n) {
-            throw new IllegalStateException(
-                    "Greedy no ha generado una ruta válida.");
-        }
-
-        solucionActual = new ArrayList<>(solucionActual);
-
-        double costeActual = costeRuta(solucionActual, distancias);
-
-        ArrayList<Tuple<Integer, Integer>> mejorSolucion =
-                new ArrayList<>(solucionActual);
-
-        double mejorCoste = costeActual;
-
-        // --------------------------------------------------------
-        // 5. ESTRUCTURAS DE LA BÚSQUEDA TABÚ
-        // --------------------------------------------------------
-
-        /*
-         * Cada movimiento tabú almacena las posiciones i y j
-         * y el número de iteraciones durante las que permanece activo.
-         */
-        class MovimientoTabu {
-            int i;
-            int j;
-            int vida;
-
-            MovimientoTabu(int i, int j, int vida) {
-                this.i = i;
-                this.j = j;
-                this.vida = vida;
-            }
-        }
-
-        List<MovimientoTabu> listaTabu = new ArrayList<>();
-
-        /*
-         * DLB (Don't Look Bits):
-         * true  -> no exploramos movimientos desde esta posición.
-         * false -> la posición puede explorarse.
-         */
         boolean[] dlb = new boolean[n];
-        Arrays.fill(dlb, false);
 
+        int empeoramientos = 0;
         int iteraciones = 0;
-        int sinMejora = 0;
 
-        int maxSinMejora = Math.max(
-                1, (int) Math.ceil(Esta * maxIteraciones));
-
-        // --------------------------------------------------------
-        // 6. BUCLE PRINCIPAL
-        // --------------------------------------------------------
-
-        while (iteraciones < maxIteraciones
-                && sinMejora < maxSinMejora) {
-
-            double mejorVecinoCoste = Double.POSITIVE_INFINITY;
-
-            ArrayList<Tuple<Integer, Integer>> mejorVecino = null;
+        while (iteraciones < maxIteraciones) {
 
             int mejorI = -1;
             int mejorJ = -1;
+            int mejorDelta = 0;
+            boolean hayMovimiento = false;
 
-            // ----------------------------------------------------
-            // 7. EXPLORACIÓN DEL VECINDARIO 2-OPT
-            // ----------------------------------------------------
+            // TODO -- Corregido Claude
+            // Fase 1: igual que la BL, primer vecino que mejora a la actual (con DLB) saltándose los tabú
+            for (int i = 0; i < n - 1 && !hayMovimiento; i++) {
+                int ciudadI = actual[i];
+                if (dlb[ciudadI]) continue;
 
-            for (int i = 0; i < n - 1; i++) {
-
-                if (dlb[i]) {
-                    continue;
-                }
-
-                boolean mejoraPosicion = false;
+                boolean mejora = false;
+                boolean saltadoPorTabu = false;
 
                 for (int j = i + 1; j < n; j++) {
+                    if (i == 0 && j == n - 1) continue;
 
-                    // Evitamos invertir toda la ruta.
-                    if (i == 0 && j == n - 1) {
+                    if (esTabu(memoria, ciudadI, actual[j])) {
+                        saltadoPorTabu = true;
                         continue;
                     }
 
-                    /*
-                     * FACTORIZACIÓN 2-OPT:
-                     * Quitamos los arcos (i-1, i) y (j, j+1).
-                     * Añadimos los arcos (i-1, j) y (i, j+1).
-                     */
-
-                    int anteriorI = (i - 1 + n) % n;
-                    int siguienteJ = (j + 1) % n;
-
-                    int ciudadAnterior =
-                            solucionActual.get(anteriorI).first;
-
-                    int ciudadI =
-                            solucionActual.get(i).first;
-
-                    int ciudadJ =
-                            solucionActual.get(j).first;
-
-                    int ciudadSiguiente =
-                            solucionActual.get(siguienteJ).first;
-
-                    int arcosAntiguos =
-                            distancias[ciudadAnterior][ciudadI]
-                                    + distancias[ciudadJ][ciudadSiguiente];
-
-                    int arcosNuevos =
-                            distancias[ciudadAnterior][ciudadJ]
-                                    + distancias[ciudadI][ciudadSiguiente];
-
-                    double costeVecino = costeActual
-                            + arcosNuevos - arcosAntiguos;
-
-                    // Comprobar si el movimiento es tabú.
-                    boolean esTabu = false;
-
-                    for (MovimientoTabu movimiento : listaTabu) {
-                        if (movimiento.i == i
-                                && movimiento.j == j) {
-                            esTabu = true;
-                            break;
-                        }
-                    }
-
-                    /*
-                     * CRITERIO DE ASPIRACIÓN:
-                     * Permitimos un movimiento tabú si mejora
-                     * la mejor solución global.
-                     */
-                    if (esTabu && costeVecino >= mejorCoste) {
-                        continue;
-                    }
-
-                    // Seleccionamos el mejor vecino admisible.
-                    if (costeVecino < mejorVecinoCoste) {
-
-                        mejorVecinoCoste = costeVecino;
+                    int delta = delta2opt(actual, i, j, n, dist);
+                    if (delta < 0) {
                         mejorI = i;
                         mejorJ = j;
-
-                        mejorVecino = new ArrayList<>(solucionActual);
-
-                        Collections.reverse(
-                                mejorVecino.subList(i, j + 1));
-
-                        mejoraPosicion = costeVecino < costeActual;
+                        mejorDelta = delta;
+                        hayMovimiento = true;
+                        mejora = true;
+                        break;
                     }
                 }
 
-                // Si no hay mejora desde i, activamos su DLB.
-                if (!mejoraPosicion) {
-                    dlb[i] = true;
+                // si había algún movimiento tabú no apagamos la ciudad, puede que luego sí valga
+                if (!mejora && !saltadoPorTabu) {
+                    dlb[ciudadI] = true;
                 }
             }
 
-            // ----------------------------------------------------
-            // 8. APLICAR EL MOVIMIENTO ELEGIDO
-            // ----------------------------------------------------
+            // TODO -- Corregido Claude
+            // Fase 2: ningún vecino mejora, así que nos movemos al mejor del entorno completo
+            // aunque empeore ("la mejor de las peores"). Sin criterio de aspiración.
+            if (!hayMovimiento) {
+                int mejorDeltaEntorno = Integer.MAX_VALUE;
+
+                for (int i = 0; i < n - 1; i++) {
+                    int ciudadI = actual[i];
+                    for (int j = i + 1; j < n; j++) {
+                        if (i == 0 && j == n - 1) continue;
+                        if (esTabu(memoria, ciudadI, actual[j])) continue;
+
+                        int delta = delta2opt(actual, i, j, n, dist);
+                        if (delta < mejorDeltaEntorno) {
+                            mejorDeltaEntorno = delta;
+                            mejorI = i;
+                            mejorJ = j;
+                        }
+                    }
+                }
+
+                if (mejorI != -1) {
+                    mejorDelta = mejorDeltaEntorno;
+                    hayMovimiento = true;
+                }
+            }
 
             iteraciones++;
 
-            if (mejorVecino == null) {
-                Arrays.fill(dlb, false);
-                sinMejora++;
-                continue;
+            // las memorias se actualizan en cada iteración
+            decrementarTabu(tabuVivos, memoria);
+
+            if (!hayMovimiento) {
+                // pasa solo si todos los vecinos son tabú
+                empeoramientos++;
+                logger.sinMovimiento(iteraciones);
+            } else {
+                int ciudadA = actual[mejorI];
+                int ciudadB = actual[mejorJ];
+
+                Distancias.invertir(actual, mejorI, mejorJ);
+                costeActual += mejorDelta;
+
+                // MCP: el movimiento queda tabú durante Ten iteraciones
+                int menor = Math.min(ciudadA, ciudadB);
+                int mayor = Math.max(ciudadA, ciudadB);
+                memoria.set(menor, mayor, Ten);
+                tabuVivos.add(new int[]{menor, mayor, Ten});
+
+                // MLP: sumamos 1 a cada arco de la solución actual
+                for (int p = 0; p < n; p++) {
+                    int c1 = actual[p];
+                    int c2 = actual[(p + 1) % n];
+                    memoria.sumar(Math.max(c1, c2), Math.min(c1, c2));
+                }
+
+                dlb[ciudadA] = false;
+                dlb[ciudadB] = false;
+
+                // mejor del momento: si no lo mejora cuenta como empeoramiento
+                if (costeActual < costeMejorMomento) {
+                    mejorMomento = actual.clone();
+                    costeMejorMomento = costeActual;
+                    empeoramientos = 0;
+                } else {
+                    empeoramientos++;
+                }
+
+                String nota = null;
+                if (costeActual < costeMejorGlobal) {
+                    mejorGlobal = actual.clone();
+                    costeMejorGlobal = costeActual;
+                    nota = "NUEVO MEJOR GLOBAL";
+                }
+
+                logger.iteracion(iteraciones, mejorI, mejorJ, ciudadA, ciudadB,
+                        mejorDelta, costeActual, actual, nota);
             }
 
-            solucionActual = mejorVecino;
-            costeActual = mejorVecinoCoste;
+            // TODO -- Corregido Claude
+            // Estancamiento: nueva solución por oscilación estratégica (Osc = prob. de intensificar,
+            // el resto diversifica) y se reinician todas las estructuras menos la MLP
+            if (empeoramientos >= maxEmpeoramientos && iteraciones < maxIteraciones) {
+                boolean intensificar = rnd.nextDouble() < Osc;
 
-            // ----------------------------------------------------
-            // 9. ACTUALIZAR LISTA TABÚ
-            // ----------------------------------------------------
+                actual = generarNueva(n, intensificar, memoria, dist, rnd);
+                costeActual = dist.coste(actual);
 
-            listaTabu.add(
-                    new MovimientoTabu(mejorI, mejorJ, Ten));
+                for (int[] t : tabuVivos) {
+                    memoria.set(t[0], t[1], 0);
+                }
+                tabuVivos.clear();
+                Arrays.fill(dlb, false);
+                empeoramientos = 0;
 
-            Iterator<MovimientoTabu> iterador =
-                    listaTabu.iterator();
+                mejorMomento = actual.clone();
+                costeMejorMomento = costeActual;
 
-            while (iterador.hasNext()) {
-                MovimientoTabu movimiento = iterador.next();
+                if (costeActual < costeMejorGlobal) {
+                    mejorGlobal = actual.clone();
+                    costeMejorGlobal = costeActual;
+                }
 
-                movimiento.vida--;
+                logger.estancamiento(iteraciones, intensificar ? "intensificacion" : "diversificacion",
+                        costeActual, actual);
+            }
+        }
 
-                if (movimiento.vida <= 0) {
-                    iterador.remove();
+        logger.finalizar(mejorGlobal, costeMejorGlobal);
+
+        return dist.aTuplas(mejorGlobal);
+    }
+
+    // Cambio de coste de invertir el tramo i..j (solo cambian dos arcos)
+    private static int delta2opt(int[] ruta, int i, int j, int n, Distancias dist) {
+        int anterior = ruta[(i - 1 + n) % n];
+        int siguiente = ruta[(j + 1) % n];
+        int ci = ruta[i];
+        int cj = ruta[j];
+
+        return dist.d(anterior, cj) + dist.d(ci, siguiente)
+                - dist.d(anterior, ci) - dist.d(cj, siguiente);
+    }
+
+    private static boolean esTabu(MatrizMemoria memoria, int a, int b) {
+        return memoria.get(Math.min(a, b), Math.max(a, b)) > 0;
+    }
+
+    // resta 1 a la tenencia de cada movimiento tabú y quita los que llegan a 0
+    private static void decrementarTabu(ArrayDeque<int[]> tabuVivos, MatrizMemoria memoria) {
+        Iterator<int[]> it = tabuVivos.iterator();
+        while (it.hasNext()) {
+            int[] t = it.next();
+            t[2]--;
+            memoria.set(t[0], t[1], Math.max(t[2], 0));
+            if (t[2] <= 0) {
+                it.remove();
+            }
+        }
+    }
+
+    // TODO -- Corregido Claude
+    // Nueva solución a partir de la MLP: desde una ciudad al azar se va a la ciudad sin visitar con el arco
+    // más usado (intensificar) o menos usado (diversificar); si empatan, la más cercana
+    private static int[] generarNueva(int n, boolean intensificar, MatrizMemoria memoria,
+                                      Distancias dist, Random rnd) {
+        int[] nueva = new int[n];
+        boolean[] visitada = new boolean[n];
+
+        int actual = rnd.nextInt(n);
+        nueva[0] = actual;
+        visitada[actual] = true;
+
+        for (int pos = 1; pos < n; pos++) {
+            int elegida = -1;
+            int mejorFrecuencia = 0;
+            int mejorDistancia = 0;
+
+            for (int c = 0; c < n; c++) {
+                if (visitada[c]) continue;
+
+                int frecuencia = memoria.get(Math.max(actual, c), Math.min(actual, c));
+                int distancia = dist.d(actual, c);
+
+                boolean mejor;
+                if (elegida == -1) {
+                    mejor = true;
+                } else if (frecuencia != mejorFrecuencia) {
+                    mejor = intensificar ? frecuencia > mejorFrecuencia : frecuencia < mejorFrecuencia;
+                } else {
+                    mejor = distancia < mejorDistancia;
+                }
+
+                if (mejor) {
+                    elegida = c;
+                    mejorFrecuencia = frecuencia;
+                    mejorDistancia = distancia;
                 }
             }
 
-            // ----------------------------------------------------
-            // 10. ACTUALIZAR MEJOR SOLUCIÓN GLOBAL
-            // ----------------------------------------------------
+            nueva[pos] = elegida;
+            visitada[elegida] = true;
+            actual = elegida;
+        }
 
-            if (costeActual < mejorCoste) {
+        return nueva;
+    }
 
-                mejorSolucion = new ArrayList<>(solucionActual);
-                mejorCoste = costeActual;
-                sinMejora = 0;
+    // Matriz cuadrada n x n: encima de la diagonal la MCP, debajo la MLP
+    private static class MatrizMemoria {
+        private final long n;
+        private final int[][] densa;
+        private final HashMap<Long, Integer> dispersa;
 
-                // Reactivamos la exploración del vecindario.
-                Arrays.fill(dlb, false);
-
+        MatrizMemoria(int n) {
+            this.n = n;
+            if (n <= LIMITE_MATRIZ) {
+                densa = new int[n][n];
+                dispersa = null;
             } else {
-                sinMejora++;
-            }
-
-            // Las posiciones modificadas vuelven a explorarse.
-            dlb[mejorI] = false;
-            dlb[mejorJ] = false;
-
-            // ----------------------------------------------------
-            // 11. DIVERSIFICACIÓN
-            // ----------------------------------------------------
-
-            if (sinMejora > 0
-                    && sinMejora % maxSinMejora == 0
-                    && rnd.nextDouble() < Osc) {
-
-                Arrays.fill(dlb, false);
+                // con d18512 la matriz entera ocuparía 1,3 GB, solo guardamos las celdas distintas de 0
+                densa = null;
+                dispersa = new HashMap<>();
             }
         }
 
-        // --------------------------------------------------------
-        // 12. DEVOLVER LA MEJOR SOLUCIÓN ENCONTRADA
-        // --------------------------------------------------------
+        int get(int fila, int col) {
+            if (densa != null) return densa[fila][col];
+            Integer v = dispersa.get(fila * n + col);
+            return v == null ? 0 : v;
+        }
 
-        return mejorSolucion;
-    }
-
-    // ============================================================
-    // MÉTODOS AUXILIARES
-    // ============================================================
-
-    /*
-     * Calcula la matriz simétrica de distancias euclídeas
-     * redondeadas, siguiendo el criterio EUC_2D.
-     */
-    private static int[][] calcularMatrizDistancias(Dato dato) {
-
-        int n = dato.DIMENSION;
-        int[][] distancias = new int[n][n];
-
-        for (int i = 0; i < n; i++) {
-
-            Coordenadas ci = dato.NODE_COORD_SECTION.get(i);
-
-            for (int j = i + 1; j < n; j++) {
-
-                Coordenadas cj = dato.NODE_COORD_SECTION.get(j);
-
-                double dx = ci.x - cj.x;
-                double dy = ci.y - cj.y;
-
-                int distancia = (int) Math.round(
-                        Math.sqrt(dx * dx + dy * dy));
-
-                distancias[i][j] = distancia;
-                distancias[j][i] = distancia;
+        void set(int fila, int col, int valor) {
+            if (densa != null) {
+                densa[fila][col] = valor;
+            } else if (valor == 0) {
+                dispersa.remove(fila * n + col);
+            } else {
+                dispersa.put(fila * n + col, valor);
             }
         }
 
-        return distancias;
-    }
-
-    /*
-     * Calcula el coste total de una ruta cerrada:
-     * última ciudad -> primera ciudad.
-     */
-    private static double costeRuta(
-            ArrayList<Tuple<Integer, Integer>> ruta,
-            int[][] distancias) {
-
-        double coste = 0.0;
-        int n = ruta.size();
-
-        for (int i = 0; i < n; i++) {
-
-            int actual = ruta.get(i).first;
-            int siguiente = ruta.get((i + 1) % n).first;
-
-            coste += distancias[actual][siguiente];
+        void sumar(int fila, int col) {
+            if (densa != null) {
+                densa[fila][col]++;
+            } else {
+                dispersa.merge(fila * n + col, 1, Integer::sum);
+            }
         }
-
-        return coste;
     }
 }

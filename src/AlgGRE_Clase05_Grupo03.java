@@ -1,78 +1,41 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class AlgGRE_Clase05_Grupo03 {
 
     public static ArrayList<Tuple<Integer, Integer>> Greedy(Dato dato, String archivoActual) {
-        //Configuracion.Logger logger = new Configuracion.Logger("Greedy", archivoActual, null);
+        // TODO -- Corregido Claude
+        // el logger estaba comentado, ahora escribe en logs/ un paso por cada ciudad añadida
+        Logger logger = new Logger("Greedy", archivoActual, null);
 
-        int tamMatriz = dato.DIMENSION;
-        int[][] distancias = calcularMatrizDistancias(dato);
-
-        ArrayList<Integer> UnidadesDistancias = new ArrayList<>();
-
-       // logger.appendLine("Calculando sumas de distancias al resto de ciudades...");
-
-        for (int i = 0; i < tamMatriz; i++) {
-            int sum = 0;
-            for (int j = 0; j < tamMatriz; j++) {
-                sum += distancias[i][j];
-            }
-            UnidadesDistancias.add(sum);
-            //logger.appendLine("Suma de distancias para ciudad " + i + ": " + sum);
-        }
-
-        ArrayList<Tuple<Integer, Integer>> Resultado = new ArrayList<>();
-        ArrayList<Integer> distanciasCopia = new ArrayList<>(UnidadesDistancias);
-
-       // logger.appendLine("\nIniciando construcción greedy de la ruta...");
-
-        for (int i = 0; i < tamMatriz; i++) {
-            int menor = Integer.MAX_VALUE;
-            int posicion = -1;
-
-            // Buscar la ciudad con menor suma de distancias restante
-            for (int j = 0; j < tamMatriz; j++) {
-                if (distanciasCopia.get(j) < menor) {
-                    menor = distanciasCopia.get(j);
-                    posicion = j;
-                }
-            }
-
-            //logger.appendLine("Iteración " + i + ": Añadiendo ciudad " + posicion
-            //        + " (suma distancias=" + menor + ")");
-
-            distanciasCopia.set(posicion, Integer.MAX_VALUE);
-            Resultado.add(new Tuple<>(posicion, menor));
-
-            //logger.appendLine("Ruta parcial: " + Resultado);
-        }
-
-        double costeFinal = Configuracion.funcionEvaluatoria(dato, Resultado);
-        //logger.logFinalSolution(Resultado, costeFinal);
-
-        return Resultado;
-    }
-
-    /**
-     * Calcula la matriz de distancias euclídeas entre todas las ciudades
-     * a partir de las coordenadas del Dato (formato TSPLIB, EUC_2D).
-     */
-    private static int[][] calcularMatrizDistancias(Dato dato) {
         int n = dato.DIMENSION;
-        int[][] distancias = new int[n][n];
 
+        // TODO -- Corregido Claude
+        // antes se hacía una matriz de n x n a mano en cada algoritmo (con d18512 no cabe en memoria),
+        // ahora se usa la clase Distancias que la calcula una vez y se salta la matriz si n es grande
+        Distancias dist = Distancias.de(dato);
+        int[] sumas = dist.sumas();
+
+        // vector <ciudad, suma de distancias al resto> ordenado de menor a mayor suma
+        Integer[] orden = new Integer[n];
         for (int i = 0; i < n; i++) {
-            Coordenadas ci = dato.NODE_COORD_SECTION.get(i);
-            for (int j = 0; j < n; j++) {
-                Coordenadas cj = dato.NODE_COORD_SECTION.get(j);
-                double dx = ci.x - cj.x;
-                double dy = ci.y - cj.y;
-                distancias[i][j] = (int) Math.round(Math.sqrt(dx * dx + dy * dy));
-            }
+            orden[i] = i;
         }
-        return distancias;
-    }
+        // TODO -- Corregido Claude
+        // antes se buscaba el mínimo n veces (n^2), con ordenar una vez basta. El sort es estable,
+        // así que si hay empate sale antes la ciudad con índice menor, igual que antes
+        Arrays.sort(orden, (a, b) -> Integer.compare(sumas[a], sumas[b]));
 
+        ArrayList<Tuple<Integer, Integer>> resultado = new ArrayList<>(n);
+        for (int paso = 0; paso < n; paso++) {
+            int ciudad = orden[paso];
+            resultado.add(new Tuple<>(ciudad, sumas[ciudad]));
+            logger.paso(paso, ciudad, sumas[ciudad], null);
+        }
+
+        double costeFinal = Configuracion.funcionEvaluatoria(dato, resultado);
+        logger.finalizar(resultado, costeFinal);
+
+        return resultado;
+    }
 }

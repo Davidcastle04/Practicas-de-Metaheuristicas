@@ -28,19 +28,22 @@ public class AlgBL_Clase05_Grupo03 {
             mejoraGlobal = false;
 
             for (int i = 0; i < n; i++) {
-                // Si nodo = 1, lo ignoramos porque no es prometedor
-                if (DLB[i] == 0) {
+
+                int ciudadI = rutaActual.get(i).first;
+
+                // Si DLB de la ciudad = 1, lo ignoramos porque no es prometedor
+                if (DLB[ciudadI] == 0) {
                     boolean improve_flag = false;
 
                     // Exploramos el vecindario invirtiendo desde 'i' hasta 'j' el otp
                     for (int j = i + 1; j < n; j++) {
 
-                        // como es simetrico, evitamos invertir por completo!!!!!!!!!!!!!!
+                        // como es simetrico, evitamos invertir por completo!!!!!!!!!!!!!!?=
                         if (i == 0 && j == n - 1) continue;
 
                         // FACTORIZACIÓN, solo los arcos diferentes
                         int nodoAnteriorI = rutaActual.get((i - 1 + n) % n).first;
-                        int nodoI = rutaActual.get(i).first;
+                        int nodoI = rutaActual.get(i).first; // Esto es igual a ciudadI
                         int nodoJ = rutaActual.get(j).first;
                         int nodoSiguienteJ = rutaActual.get((j + 1) % n).first;
 
@@ -54,10 +57,11 @@ public class AlgBL_Clase05_Grupo03 {
                             // Aplicamos el movimiento 2-opt (Invierte el subsegmento de i a j)
                             Collections.reverse(rutaActual.subList(i, j + 1));
 
-                            // Activamos ambos nodos en el DLB porque ahora su entorno ha cambiado y vuelve a ser prometedor
-                            DLB[i] = 0;
-                            DLB[j] = 0;
-                            iteraciones++; // Cada vez que evaluamos un movimiento, sumamos una iteración todo cada vez que se aplique, no al evaluar
+                            // Activamos ambos NODOS (ciudades reales) en el DLB porque su entorno ha cambiado
+                            DLB[nodoI] = 0;
+                            DLB[nodoJ] = 0;
+
+                            iteraciones++; // Se mantiene aquí por directriz de los profesores
                             improve_flag = true;
                             mejoraGlobal = true;
                             break;
@@ -67,9 +71,9 @@ public class AlgBL_Clase05_Grupo03 {
                         if (iteraciones >= maxIteraciones) break;
                     }
 
-                    // Si tras probar todas las combinaciones con 'j', este nodo 'i' no mejoró nada, lo apagamos
+                    // Si tras probar todas las combinaciones con 'j', esta ciudad 'ciudadI' no mejoró nada, la apagamos
                     if (!improve_flag) {
-                        DLB[i] = 1;
+                        DLB[ciudadI] = 1;
                     }
 
                     if (iteraciones >= maxIteraciones) break;

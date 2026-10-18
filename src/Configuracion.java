@@ -246,7 +246,7 @@ public class Configuracion {
                 System.out.println("La funcion Evaluadora para el archivo " + archivoActual.getName());
                 ArrayList<Tuple<Integer, Integer>> resultado = new ArrayList<>();
                 resultado = AlgGRE_Clase05_Grupo03.Greedy(dato, archivoActual.getName());
-                System.out.printf("\t->Resultado: %.0f\n", funcionEvaluatoria(dato,resultado));
+                System.out.printf("\t->Resultado: %.0f\n", funcionEvaluatoria(dato, resultado));
             }
             System.out.println("-----------------------------------------------------------------------");
             System.out.print("\u001B[0m");
@@ -264,7 +264,7 @@ public class Configuracion {
                         Dato dato = cargar(archivoActual);
                         System.out.println("La funcion Evaluadora para el archivo " + archivoActual.getName());
                         ArrayList<Tuple<Integer, Integer>> resultado = AlgGRA_Clase05_Grupo03.GreedyAleatorizado(dato, k_GRA, semilla, archivoActual.getName());
-                        System.out.printf("\t->Resultado: %.0f\n", funcionEvaluatoria(dato,resultado));
+                        System.out.printf("\t->Resultado: %.0f\n", funcionEvaluatoria(dato, resultado));
                     }
                 }
             } else {
@@ -296,7 +296,7 @@ public class Configuracion {
         }
 
         System.out.print("\u001B[0m");
-    }
+
 
 /*
         if (tipo.equals("busquedaLocal")) {
@@ -346,7 +346,7 @@ public class Configuracion {
             System.out.println("-----------------------------------------------------------------------");
             System.out.print("\u001B[0m");
         }
-
+*/
         if (tipo.equals("busquedaTABU")) {
 
             System.out.print("\u001B[35m");
@@ -356,12 +356,13 @@ public class Configuracion {
             int tenencia = -2;
             double Oscilacion = -2;
             double Estancamiento = -2;
+            int iteracionesBT= 10000;
 
             for (Object param : otrosParametros) {
                 String str = param.toString();
 
                 // La k la utilizaremos para el greedy aleatorizado
-                if (str.startsWith("k=")) {
+                if (str.startsWith("k-GRA=")) {
                     try {
                         k = Integer.parseInt(str.substring(2));
                     } catch (NumberFormatException e) {
@@ -397,10 +398,20 @@ public class Configuracion {
                     }
                 }
 
+                if (str.startsWith("IteracionesBT=")) {
+                    try {
+                        String valor = str.substring("IteracionesBT=".length()).trim(); // extrae después de "IteracionesBT="
+                        iteracionesBT = Integer.parseInt(valor);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error: valor de Est no es un número válido en -> " + str);
+                    }
+                }
+
 
             }
 
             for (File archivoActual : getArchivos()) {
+                Dato dato = cargar(archivoActual);
 
                 if (tenencia == -2 || Oscilacion == -2 || Estancamiento == -2) {
                     System.err.print(" <------ !!!!! ERROR FALTAN PARÁMETROS PARA LA BÚSQUEDA TABÚ !!!!! ------>");
@@ -412,22 +423,18 @@ public class Configuracion {
                     System.out.println("La función Evaluadora para el archivo " + archivoActual.getName());
                     for (Long aLong : semillas) {
 
-                        int[][] flujo = Archivo.leerDAT(archivoActual, 1);
-                        int[][] distancia = Archivo.leerDAT(archivoActual, 2);
                         System.out.println("\t-> La semilla utilizada para la solucion Inicial es: " + aLong);
-                        ArrayList<Integer> asignacion;
-                        asignacion = BusquedaTabu(flujo, distancia, aLong.intValue(), k, tenencia, Oscilacion, Estancamiento, archivoActual.getName());
+                        ArrayList<Tuple<Integer, Integer>> asignacion;
+                        asignacion = AlgBT_Clase05_Grupo03.BusquedaTabu(dato, aLong, k,iteracionesBT, tenencia, Oscilacion, Estancamiento, archivoActual.getName());
                         System.out.println("\t\t->Vector de permutacion: " + asignacion);
-                        System.out.println("\t\t->Resultado: " + funcionEvaluatoria(flujo, distancia, asignacion));
+                        System.out.println("\t\t->Resultado: " + funcionEvaluatoria(dato, asignacion));
                     }
                 } else {
-                    int[][] flujo = Archivo.leerDAT(archivoActual, 1);
-                    int[][] distancia = Archivo.leerDAT(archivoActual, 2);
                     System.out.println("\t-> La funcion Evaluadora para el archivo " + archivoActual.getName());
-                    ArrayList<Integer> asignacion;
-                    asignacion = BusquedaTabu(flujo, distancia, -1, -1, tenencia, Oscilacion, Estancamiento, archivoActual.getName());
+                    ArrayList<Tuple<Integer, Integer>> asignacion;
+                    asignacion = AlgBT_Clase05_Grupo03.BusquedaTabu(dato, Long.parseLong("-1"), -1,iteracionesBT, tenencia, Oscilacion, Estancamiento, archivoActual.getName());
                     System.out.println("\t\t->Vector de permutacion: " + asignacion);
-                    System.out.println("\t\t->Resultado: " + funcionEvaluatoria(flujo, distancia, asignacion));
+                    System.out.println("\t\t->Resultado: " + funcionEvaluatoria(dato, asignacion));
                 }
 
             }
@@ -435,375 +442,7 @@ public class Configuracion {
             System.out.print("\u001B[0m");
 
         }
-
-        if (tipo.equals("AlgEstacionario") || tipo.equals("AlgGeneracional")) {
-
-            if (!tipo.equals("AlgGeneracional")) {
-                System.out.println("\u001B[95m");
-                System.out.println("----------------- EVALUACIÓN ALGORITMO ESTACIONARIO -------------------");
-            } else {
-                System.out.println("\u001B[32m");
-                System.out.println("----------------- EVALUACIÓN ALGORITMO GENERACIONAL -------------------");
-            }
-
-            // Valores para el algoritmo como k, valor de aceptación de mutacion y cruce
-            int k = 0;
-            double VAM = 0;
-            double VAC = 0;
-            int INDEVAL = 0;
-
-            // Buscamos el parametro de configuración
-            for (Object par : otrosParametros) {
-
-                String p = par.toString();
-
-                // La k la utilizaremos para el greedy aleatorizado
-                if (p.startsWith("k=")) {
-                    try {
-                        k = Integer.parseInt(p.substring(2));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de k no es un número válido en -> " + p);
-                    }
-                }
-
-                // La VAC la utilizaremos para determinar el valor de aceptación de cruce
-                if (p.startsWith("VAC=")) {
-                    try {
-                        VAC = Double.parseDouble(p.substring(4));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de k no es un número válido en -> " + p);
-                    }
-                }
-
-                // La VAC la utilizaremos para determinar el valor de aceptación de mutación
-                if (p.startsWith("VAM=")) {
-                    try {
-                        VAM = Double.parseDouble(p.substring(4));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de k no es un número válido en -> " + p);
-                    }
-                }
-
-                // La VAC la utilizaremos para determinar el valor de aceptación de mutación
-                if (p.startsWith("INDEVAL=")) {
-                    try {
-                        INDEVAL = Integer.parseInt(p.substring(8));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de INDEVAL no es un número válido en -> " + p);
-                    }
-                }
-
-                if (p.equals("AlgEstacionario.conf") || p.equals("AlgGeneracional.conf")) {
-
-
-                    File archivo = new File("./AlgEstacionario.conf");
-                    if (!archivo.exists()) {
-                        throw new InvalidParameterException("Archivo " + archivo.getName() + " no existe");
-                    }
-                    // Leemos el archivo linea a linea
-                    BufferedReader br;
-                    try {
-                        br = new BufferedReader(new FileReader(archivo));
-                        String texto = br.readLine();
-
-                        while (texto != null) { // Repetir mientras no se llegue al final del fichero
-
-                            int Individuos = 0;
-                            int aleatorioInit = 0;
-                            int Kbest = 0;
-                            int Kworks = 0;
-                            boolean Cruce = false; // Sí es 0 es OX2 y si es 1 usamos MOC
-                            int Elite = 0;
-                            int ParadaIteraciones = 0;
-                            int ParadaSegundos = 0;
-
-                            String[] argumentos = texto.split(",");
-
-                            for (String argumento : argumentos) {
-
-                                if (argumento.startsWith("M=")) {
-                                    Individuos = Integer.parseInt(argumento.substring(2));
-                                }
-
-                                if (argumento.startsWith("Init.Aleatorio=")) {
-                                    aleatorioInit = Integer.parseInt(argumento.substring("Init.Aleatorio=".length()));
-                                }
-
-                                if (argumento.startsWith("Kbest=")) {
-                                    Kbest = Integer.parseInt(argumento.substring("Kbest=".length()));
-                                }
-
-                                if (argumento.startsWith("Kworks=")) {
-                                    Kworks = Integer.parseInt(argumento.substring("Kworks=".length()));
-                                }
-
-                                if (argumento.startsWith("Cruce=")) {
-                                    if (!argumento.equals("Cruce=OX2")) {
-                                        Cruce = true;
-                                    }
-                                }
-
-                                if (argumento.startsWith("Elite=")) {
-                                    Elite = Integer.parseInt(argumento.substring("Elite=".length()));
-                                }
-
-                                if (argumento.startsWith("Parada=")) {
-                                    String valor = argumento.substring("Parada=".length());
-                                    String[] partes = valor.split("/");
-
-                                    if (partes.length == 2) {
-                                        ParadaIteraciones = Integer.parseInt(partes[0]);
-                                        ParadaSegundos = Integer.parseInt(partes[1]);
-
-                                    } else {
-                                        System.out.println("Formato inválido para Parada. Usa Parada=[iteraciones/segundos]");
-                                    }
-                                }
-
-                            }
-
-                            for (File archivoActual : getArchivos()) {
-
-                                if (!semillas.isEmpty()) {
-                                    System.out.println("\bParámetros Utilizados: " +
-                                            "NºIndividuos(" + Individuos + "), " +
-                                            "Aleatoriedad(" + aleatorioInit + "), " +
-                                            "Kworks(" + Kworks + "), " +
-                                            "Kbest(" + Kbest + "), " +
-                                            "Cruce(" + (Cruce ? "MOC" : "OX2") + "), " +
-                                            "Elite(" + Elite + "), " +
-                                            "ParadaEvaluaciones(" + ParadaIteraciones + "), " +
-                                            "ParadaSegundos(" + ParadaSegundos + ")," +
-                                            "Individuos a evaluar(" + INDEVAL + ")");
-
-                                    System.out.println("\tLa función Evaluadora para el archivo " + archivoActual.getName());
-                                    for (Long seed : semillas) {
-                                        int[][] flujo = Archivo.leerDAT(archivoActual, 1);
-                                        int[][] distancia = Archivo.leerDAT(archivoActual, 2);
-                                        System.out.println("\t\t-> La semilla utilizada para la solucion Inicial es: " + seed);
-                                        ArrayList<Integer> asignacion;
-                                        if (tipo.equals("AlgEstacionario")) {
-                                            asignacion = AlgoritmoEstacional(flujo, distancia, seed, k, Individuos, aleatorioInit, Kworks, Kbest, Cruce, Elite, ParadaIteraciones, ParadaSegundos, INDEVAL, VAM);
-                                        } else {
-                                            asignacion = AlgoritmoGeneracional(flujo, distancia, seed, k, Individuos, aleatorioInit, Kworks, Kbest, Cruce, Elite, ParadaIteraciones, ParadaSegundos, VAC, VAM);
-                                        }
-                                        System.out.println("\t\t\t->Vector de permutacion: " + asignacion);
-                                        System.out.println("\t\t\t->Resultado: " + funcionEvaluatoria(flujo, distancia, asignacion));
-                                    }
-                                } else {
-                                    if (tipo.equals("AlgEstacionario")) {
-                                        System.out.println("FALTAN PARAMETROS PARA EL ALGORITMO ESTACIONARIO");
-                                    } else {
-                                        System.out.println("FALTAN PARAMETROS PARA EL ALGORITMO GENERACIONARIO");
-                                    }
-
-                                }
-
-                            }
-                            texto = br.readLine();
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println("-----------------------------------------------------------------------");
-                    System.out.println("\u001B[0m");
-
-                }
-            }
-
-        }
-
-        if (tipo.equals("AlgMemGeneracional")) {
-            System.out.println("\u001B[97m");
-            System.out.println("---------- EVALUACIÓN ALGORITMO MEMÉTICO GENERACIONAL ------------");
-
-
-            // Valores para el algoritmo como k, valor de aceptación de mutacion y cruce utilizados para el memetico generacional
-            int k = 0;
-            double VAM = 0;
-            double VAC = 0;
-            int INDEVAL = 0;
-            int paradaEval = 0;
-
-            // Buscamos el parámetro de configuración
-            for (Object par : otrosParametros) {
-
-                String p = par.toString();
-
-                // La k la utilizaremos para el greedy aleatorizado
-                if (p.startsWith("k=")) {
-                    try {
-                        k = Integer.parseInt(p.substring(2));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de k no es un número válido en -> " + p);
-                    }
-                }
-
-                // Parada de iteraciones
-                if (p.startsWith("parada=")) {
-                    try {
-                        paradaEval = Integer.parseInt(p.substring(7));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de paradaEval no es un número válido en -> " + paradaEval);
-                    }
-                }
-
-                // La VAC la utilizaremos para determinar el valor de aceptación de cruce
-                if (p.startsWith("VAC=")) {
-                    try {
-                        VAC = Double.parseDouble(p.substring(4));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de k no es un número válido en -> " + p);
-                    }
-                }
-
-                // La VAC la utilizaremos para determinar el valor de aceptación de mutación
-                if (p.startsWith("VAM=")) {
-                    try {
-                        VAM = Double.parseDouble(p.substring(4));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de k no es un número válido en -> " + p);
-                    }
-                }
-
-                // La INDEVAL la utilizaremos para determinar el intervalo de evaluación
-                if (p.startsWith("INDEVAL=")) {
-                    try {
-                        INDEVAL = Integer.parseInt(p.substring(8));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error: valor de INDEVAL no es un número válido en -> " + p);
-                    }
-                }
-
-                if (p.equals("AlgMemGeneracional.conf")) {
-
-                    File archivo = new File("./AlgMemGeneracional.conf");
-                    if (!archivo.exists())
-                        throw new InvalidParameterException("Archivo " + archivo.getName() + " no existe");
-
-
-                    // Leémos el archivo linea a linea
-                    BufferedReader br;
-                    try {
-                        br = new BufferedReader(new FileReader(archivo));
-                        String texto = br.readLine();
-
-                        while (texto != null) { // Repetir hasta que llegue al final
-
-                            int Individuos = 100;
-                            int evaluaciones = 1000;
-                            int Kbest = 2;
-                            int Kworks = 3;
-                            boolean Cruce = true; // OX2
-                            int Elite = 1;
-                            int iteraciones = 10;
-
-                            String[] argumentos = texto.split(",");
-
-                            for (String argumento : argumentos) {
-                                String arg = argumento.trim();
-
-                                if (arg.startsWith("M=")) {
-                                    Individuos = Integer.parseInt(arg.substring(2));
-                                }
-
-                                // Soporta "evaluaciones:" y "evaluaciones=" y "frecuencia="
-                                if (arg.startsWith("evaluaciones:") || arg.startsWith("evaluaciones=") || arg.startsWith("frecuencia=")) {
-                                    // Buscamos donde está el separador para cortar el string correctamente
-                                    int indexSeparador = arg.indexOf(':');
-                                    if(indexSeparador == -1) indexSeparador = arg.indexOf('=');
-
-                                    if(indexSeparador != -1) {
-                                        evaluaciones = Integer.parseInt(arg.substring(indexSeparador + 1).trim());
-                                    }
-                                }
-
-                                if (arg.startsWith("Kbest=") || arg.startsWith("kBest=")) {
-                                    Kbest = Integer.parseInt(arg.substring(6));
-                                }
-
-                                if (arg.startsWith("Kworks=") || arg.startsWith("kWorst=")) {
-                                    int indexEq = arg.indexOf('=');
-                                    Kworks = Integer.parseInt(arg.substring(indexEq + 1));
-                                }
-
-                                if (arg.startsWith("Cruce=")) {
-                                    if (!arg.substring(6).trim().equals("OX2")) {
-                                        Cruce = false; // MOC
-                                    }
-                                }
-
-                                // Soporta "E=" y "Elite="
-                                if (arg.startsWith("E=") || arg.startsWith("Elite=")) {
-                                    int indexEq = arg.indexOf('=');
-                                    Elite = Integer.parseInt(arg.substring(indexEq + 1));
-                                }
-
-                                // Soporta "iteraciones:" y "iteraciones="
-                                if (arg.startsWith("iteraciones:") || arg.startsWith("iteraciones=")) {
-                                    int indexSeparador = arg.indexOf(':');
-                                    if(indexSeparador == -1) indexSeparador = arg.indexOf('=');
-
-                                    if(indexSeparador != -1) {
-                                        iteraciones = Integer.parseInt(arg.substring(indexSeparador + 1).trim());
-                                    }
-                                }
-                            }
-
-                            for (File archivoActual : getArchivos()) {
-
-                                if (!semillas.isEmpty()) {
-                                    System.out.println("\bParámetros Utilizados: " +
-                                            "NºIndividuos(" + Individuos + "), " +
-                                            "Evaluaciones(" + evaluaciones + "), " +
-                                            "Kworks(" + Kworks + "), " +
-                                            "Kbest(" + Kbest + "), " +
-                                            "Cruce(" + (Cruce ? "MOC" : "OX2") + "), " +
-                                            "Elite(" + Elite + "), " +
-                                            "Iteraciones(" + iteraciones + "), " +
-                                            "Individuos a evaluar(" + INDEVAL + ")");
-
-                                    String color = "\u001B[0m"; // Reset (Blanco/Default)
-                                    String nombre = archivoActual.getName().toLowerCase();
-
-                                    if (nombre.contains("ford01")) color = "\u001B[31m";      // Rojo
-                                    else if (nombre.contains("ford02")) color = "\u001B[32m"; // Verde
-                                    else if (nombre.contains("ford03")) color = "\u001B[33m"; // Amarillo
-                                    else if (nombre.contains("ford04")) color = "\u001B[34m"; // Azul
-
-                                    System.out.println("\tLa función Evaluadora para el archivo " + color + archivoActual.getName() + "\u001B[0m");
-
-                                    for (Long seed : semillas) {
-                                        int[][] flujo = Archivo.leerDAT(archivoActual, 1);
-                                        int[][] distancia = Archivo.leerDAT(archivoActual, 2);
-                                        System.out.println("\t\t-> La semilla utilizada para la solucion Inicial es: " + seed);
-                                        ArrayList<Integer> asignacion;
-                                        long tiempoInicio = System.currentTimeMillis();
-                                        asignacion = AlgoritmoMemeticoGeneracional(flujo, distancia, seed, k, Individuos, Kworks, Kbest, Cruce, Elite, paradaEval, VAC, VAM, evaluaciones, iteraciones,archivoActual.getName());
-                                        long tiempoFin = System.currentTimeMillis();
-                                        double segundos = (tiempoFin - tiempoInicio) / 1000.0;
-                                        System.out.println("\t\t\t->Vector de permutacion: " + asignacion);
-                                        System.out.println("\t\t\t->Resultado: " + color + funcionEvaluatoria(flujo, distancia, asignacion) + "\u001B[0m");
-                                        System.out.println("\t\t\t->Tiempo: " + segundos + " s");
-                                    }
-                                } else {
-                                    System.out.println("FALTAN PARÁMETROS PARA EL ALGORITMO MEMÉTICO GENERACIONAL");
-                                }
-
-                            }
-                            texto = br.readLine();
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println("-----------------------------------------------------------------------");
-                    System.out.println("\u001B[0m");
-
-
-                }
-            }
-
-        }*/
+    }
 
     public static class Logger {
         private final String fileName;

@@ -7,13 +7,8 @@ import java.util.Random;
 
 public class AlgBT_Clase05_Grupo03 {
 
-    // hasta este tamaño la matriz de memorias es un array normal, si no usamos un mapa
     private static final int LIMITE_MATRIZ = 3000;
 
-    // TODO -- Corregido Claude
-    // El algoritmo estaba mal respecto al guión: tenía criterio de aspiración, usaba DLB para elegir
-    // el movimiento, no había reinicio por estancamiento ni MLP, y la tabú era una lista de posiciones.
-    // Se ha rehecho siguiendo el guión (MCP/MLP en una matriz cuadrada, oscilación estratégica, etc.)
     public static ArrayList<Tuple<Integer, Integer>> BusquedaTabu(
             Dato dato,
             Long semilla,
@@ -66,9 +61,7 @@ public class AlgBT_Clase05_Grupo03 {
 
         logger.solucionInicial(actual, costeActual);
 
-        // TODO -- Corregido Claude
-        // Una sola matriz cuadrada: por encima de la diagonal la MCP (tenencia de cada movimiento)
-        // y por debajo la MLP (veces que se ha usado cada arco)
+
         MatrizMemoria memoria = new MatrizMemoria(n);
 
         // movimientos tabú vivos {ciudadMenor, ciudadMayor, vida}, así no hay que recorrer toda la matriz
@@ -86,8 +79,7 @@ public class AlgBT_Clase05_Grupo03 {
             int mejorDelta = 0;
             boolean hayMovimiento = false;
 
-            // TODO -- Corregido Claude
-            // Fase 1: igual que la BL, primer vecino que mejora a la actual (con DLB) saltándose los tabú
+
             for (int i = 0; i < n - 1 && !hayMovimiento; i++) {
                 int ciudadI = actual[i];
                 if (dlb[ciudadI]) continue;
@@ -120,9 +112,8 @@ public class AlgBT_Clase05_Grupo03 {
                 }
             }
 
-            // TODO -- Corregido Claude
-            // Fase 2: ningún vecino mejora, así que nos movemos al mejor del entorno completo
-            // aunque empeore ("la mejor de las peores"). Sin criterio de aspiración.
+            // nos movemos al mejor del entorno completo
+            // aunque empeore . Sin criterio de aspiración.
             if (!hayMovimiento) {
                 int mejorDeltaEntorno = Integer.MAX_VALUE;
 
@@ -163,13 +154,13 @@ public class AlgBT_Clase05_Grupo03 {
                 Distancias.invertir(actual, mejorI, mejorJ);
                 costeActual += mejorDelta;
 
-                // MCP: el movimiento queda tabú durante Ten iteraciones
+                // el movimiento queda tabú durante Ten iteraciones (mcp)
                 int menor = Math.min(ciudadA, ciudadB);
                 int mayor = Math.max(ciudadA, ciudadB);
                 memoria.set(menor, mayor, Ten);
                 tabuVivos.add(new int[]{menor, mayor, Ten});
 
-                // MLP: sumamos 1 a cada arco de la solución actual
+                // sumamos 1 a cada arco de la solución actual (mlp)
                 for (int p = 0; p < n; p++) {
                     int c1 = actual[p];
                     int c2 = actual[(p + 1) % n];
@@ -179,7 +170,7 @@ public class AlgBT_Clase05_Grupo03 {
                 dlb[ciudadA] = false;
                 dlb[ciudadB] = false;
 
-                // mejor del momento: si no lo mejora cuenta como empeoramiento
+                // si no lo mejora cuenta como empeoramiento
                 if (costeActual < costeMejorMomento) {
                     mejorMomento = actual.clone();
                     costeMejorMomento = costeActual;
@@ -199,9 +190,7 @@ public class AlgBT_Clase05_Grupo03 {
                         mejorDelta, costeActual, actual, nota);
             }
 
-            // TODO -- Corregido Claude
-            // Estancamiento: nueva solución por oscilación estratégica (Osc = prob. de intensificar,
-            // el resto diversifica) y se reinician todas las estructuras menos la MLP
+            // nueva solución por oscilación estratégica ( el resto diversifica) y se reinician todas las estructuras menos la MLP
             if (empeoramientos >= maxEmpeoramientos && iteraciones < maxIteraciones) {
                 boolean intensificar = rnd.nextDouble() < Osc;
 
@@ -233,7 +222,7 @@ public class AlgBT_Clase05_Grupo03 {
         return dist.aTuplas(mejorGlobal);
     }
 
-    // Cambio de coste de invertir el tramo i..j (solo cambian dos arcos)
+    // Cambio de coste de invertir el tramo i..j
     private static int delta2opt(int[] ruta, int i, int j, int n, Distancias dist) {
         int anterior = ruta[(i - 1 + n) % n];
         int siguiente = ruta[(j + 1) % n];
@@ -261,7 +250,6 @@ public class AlgBT_Clase05_Grupo03 {
         }
     }
 
-    // TODO -- Corregido Claude
     // Nueva solución a partir de la MLP: desde una ciudad al azar se va a la ciudad sin visitar con el arco
     // más usado (intensificar) o menos usado (diversificar); si empatan, la más cercana
     private static int[] generarNueva(int n, boolean intensificar, MatrizMemoria memoria,

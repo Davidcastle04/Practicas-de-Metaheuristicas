@@ -17,16 +17,13 @@ public class AlgGRA_Clase05_Grupo03 {
         return resultado;
     }
 
-    // TODO -- Corregido Claude
-    // Versión sin log para usarla como solución inicial de la búsqueda local y la tabú.
-    // Antes la BL llamaba a GreedyAleatorizado y se creaba un log de más en cada ejecución
+
     public static ArrayList<Tuple<Integer, Integer>> generarSolucion(Dato dato, int k, Random random) {
         return construir(dato, k, random, null);
     }
 
     private static ArrayList<Tuple<Integer, Integer>> construir(Dato dato, int k, Random random, Logger logger) {
-        // TODO -- Corregido Claude
-        // con k = 0 el nextInt de abajo daba una excepción rara, ahora avisa de qué pasa
+
         if (k < 1) {
             throw new IllegalArgumentException("k del greedy aleatorizado tiene que ser al menos 1 (valor: " + k + ")");
         }

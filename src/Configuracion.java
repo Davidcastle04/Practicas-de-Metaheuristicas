@@ -19,9 +19,6 @@ public class Configuracion {
         MEJOR_CONOCIDO.put("u1060", 224094);
     }
 
-    // TODO -- Corregido Claude
-    // Antes eran HashSet y el orden salía mezclado. Con LinkedHashSet las semillas se usan en el
-    // orden del .conf (la ejecución 1 siempre con la misma semilla en todos los algoritmos)
     Set<File> archivos;
     Set<String> algoritmos;
     Set<Long> semilla;
@@ -29,9 +26,6 @@ public class Configuracion {
     int k_GRA = 5;
     int iteracionesBL = 10000;
 
-    // TODO -- Corregido Claude
-    // Los parámetros de la tabú nunca se leían del .conf (siempre salía el error de "faltan parámetros").
-    // Valores por defecto = los del guión
     int iteracionesBT = 10000;
     int tenenciaTabu = 10;
     double oscilacionEst = 0.5;
@@ -255,10 +249,6 @@ public class Configuracion {
         return costeTotal;
     }
 
-    // TODO -- Corregido Claude
-    // Se han quitado los trozos antiguos (el bloque comentado de la búsqueda local con flujo/distancia
-    // y la lectura de parámetros de la tabú desde una lista vacía). Ahora los cuatro algoritmos se
-    // lanzan con el mismo método, que además mide el tiempo y calcula la desviación y la media
     void evaluacion(String tipo, ArrayList<Long> semillas) {
 
         switch (tipo) {

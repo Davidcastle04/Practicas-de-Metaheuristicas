@@ -31,9 +31,13 @@ public class AlgGEN_Clase05_Grupo03 {
             Individuo[] elite = OperadoresGEN.calcularElite(pt, p.elite);
             // torneo
             Individuo[] seleccionados = OperadoresGEN.seleccionar(pt, p.kBest, rnd);
+            // recombinacion
             Individuo[] qt = OperadoresGEN.recombinar(seleccionados, p, rnd);
+            // mutacion
             OperadoresGEN.mutar(qt, p.probMutacion, rnd);
+            // evaluacion
             OperadoresGEN.evaluar(qt, dist, parada);
+            // reemplazo
             int reinsertados = OperadoresGEN.reemplazar(qt, elite, p.kWorst, rnd);
 
             pt = qt;

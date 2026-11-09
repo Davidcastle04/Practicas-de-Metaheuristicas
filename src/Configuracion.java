@@ -31,6 +31,13 @@ public class Configuracion {
     double oscilacionEst = 0.5;
     double estancamiento = 0.05;
 
+    // Evolutivo generacional: parámetros comunes y listas de valores a combinar (todas las versiones del guion)
+    ParametrosGEN baseGEN = new ParametrosGEN();
+    List<TipoCruce> crucesGEN = new ArrayList<>(Arrays.asList(TipoCruce.OX2, TipoCruce.MOC));
+    List<Integer> elitesGEN = new ArrayList<>(Arrays.asList(1, 2, 3));
+    List<Integer> kBestGEN = new ArrayList<>(Arrays.asList(2, 3));
+    List<Integer> kWorstGEN = new ArrayList<>(Arrays.asList(2, 3));
+
     private interface Ejecutor {
         ArrayList<Tuple<Integer, Integer>> ejecutar(Dato dato, File archivo, Long semilla);
     }
@@ -100,6 +107,42 @@ public class Configuracion {
 
                 } else if (linea.startsWith("Est=")) {
                     estancamiento = leerDecimal(linea, "Est=", estancamiento);
+
+                } else if (linea.startsWith("Cruces=")) {
+                    crucesGEN = leerCruces(linea, "Cruces=", crucesGEN);
+
+                } else if (linea.startsWith("Elites=")) {
+                    elitesGEN = leerListaEnteros(linea, "Elites=", elitesGEN);
+
+                } else if (linea.startsWith("KBest=")) {
+                    kBestGEN = leerListaEnteros(linea, "KBest=", kBestGEN);
+
+                } else if (linea.startsWith("KWorst=")) {
+                    kWorstGEN = leerListaEnteros(linea, "KWorst=", kWorstGEN);
+
+                } else if (linea.startsWith("TamPoblacion=")) {
+                    baseGEN.tamPoblacion = leerEntero(linea, "TamPoblacion=", baseGEN.tamPoblacion);
+
+                } else if (linea.startsWith("PorcAleatorios=")) {
+                    baseGEN.porcAleatorios = leerDecimal(linea, "PorcAleatorios=", baseGEN.porcAleatorios);
+
+                } else if (linea.startsWith("k-GEN=")) {
+                    baseGEN.kGreedy = leerEntero(linea, "k-GEN=", baseGEN.kGreedy);
+
+                } else if (linea.startsWith("ProbCruce=")) {
+                    baseGEN.probCruce = leerDecimal(linea, "ProbCruce=", baseGEN.probCruce);
+
+                } else if (linea.startsWith("ProbMutacion=")) {
+                    baseGEN.probMutacion = leerDecimal(linea, "ProbMutacion=", baseGEN.probMutacion);
+
+                } else if (linea.startsWith("ProbPosOX2=")) {
+                    baseGEN.probPosicionesOX2 = leerDecimal(linea, "ProbPosOX2=", baseGEN.probPosicionesOX2);
+
+                } else if (linea.startsWith("EvaluacionesGEN=")) {
+                    baseGEN.maxEvaluaciones = leerEntero(linea, "EvaluacionesGEN=", (int) baseGEN.maxEvaluaciones);
+
+                } else if (linea.startsWith("TiempoMaxGEN=")) {
+                    baseGEN.maxSegundos = leerDecimal(linea, "TiempoMaxGEN=", baseGEN.maxSegundos);
                 }
             }
 
@@ -117,6 +160,13 @@ public class Configuracion {
         System.out.println("\tTenencia tabu --> " + tenenciaTabu);
         System.out.println("\tOscilacion estrategica --> " + oscilacionEst);
         System.out.println("\tEstancamiento --> " + estancamiento);
+        System.out.println("\tGEN cruces --> " + crucesGEN + " | elites --> " + elitesGEN
+                + " | kBest --> " + kBestGEN + " | kWorst --> " + kWorstGEN);
+        System.out.println("\tGEN poblacion --> " + baseGEN.tamPoblacion + " (" + baseGEN.porcAleatorios
+                + " aleatorios, resto greedy k=" + baseGEN.kGreedy + ") | cruce --> " + baseGEN.probCruce
+                + " | mutacion --> " + baseGEN.probMutacion + " | posiciones OX2 --> " + baseGEN.probPosicionesOX2);
+        System.out.println("\tGEN parada --> " + baseGEN.maxEvaluaciones + " evaluaciones o "
+                + baseGEN.maxSegundos + " s");
         System.out.println("*********************************************************************");
         System.out.println("\u001B[0m");
 
@@ -135,6 +185,30 @@ public class Configuracion {
             System.err.println("Error al leer " + clave + " (" + valor + "), se usa " + porDefecto);
             return porDefecto;
         }
+    }
+
+    private static List<Integer> leerListaEnteros(String linea, String clave, List<Integer> porDefecto) {
+        List<Integer> lista = new ArrayList<>();
+        for (String v : linea.substring(clave.length()).trim().split("\\s+")) {
+            try {
+                lista.add(Integer.parseInt(v));
+            } catch (NumberFormatException e) {
+                System.err.println("Valor invalido en " + clave + " (" + v + "), se ignora");
+            }
+        }
+        return lista.isEmpty() ? porDefecto : lista;
+    }
+
+    private static List<TipoCruce> leerCruces(String linea, String clave, List<TipoCruce> porDefecto) {
+        List<TipoCruce> lista = new ArrayList<>();
+        for (String v : linea.substring(clave.length()).trim().split("\\s+")) {
+            try {
+                lista.add(TipoCruce.valueOf(v.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Cruce desconocido en " + clave + " (" + v + "), los validos son OX2 y MOC");
+            }
+        }
+        return lista.isEmpty() ? porDefecto : lista;
     }
 
     private static double leerDecimal(String linea, String clave, double porDefecto) {
@@ -273,9 +347,29 @@ public class Configuracion {
                                 tenenciaTabu, oscilacionEst, estancamiento, f.getName()));
                 break;
 
+            case "GEN":
+                evaluacionGEN(semillas);
+                break;
+
             default:
                 System.err.println("Algoritmo desconocido en el .conf, se ignora: " + tipo
-                        + " (los válidos son greedy, greedyALE, busquedaLocal y busquedaTABU)");
+                        + " (los válidos son greedy, greedyALE, busquedaLocal, busquedaTABU y GEN)");
+        }
+    }
+
+    // Lanza todas las versiones del evolutivo (cruce x elite x kWorst x kBest), en el orden del guion
+    private void evaluacionGEN(ArrayList<Long> semillas) {
+        for (TipoCruce cruce : crucesGEN) {
+            for (int elite : elitesGEN) {
+                for (int kWorst : kWorstGEN) {
+                    for (int kBest : kBestGEN) {
+                        final ParametrosGEN p = baseGEN.variante(cruce, elite, kBest, kWorst);
+
+                        ejecutarAlgoritmo("EVALUACION " + p.nombre(), "\u001B[38;5;203m", true, semillas,
+                                (dato, f, s) -> AlgGEN_Clase05_Grupo03.Generacional(dato, p, s, f.getName()));
+                    }
+                }
+            }
         }
     }
 

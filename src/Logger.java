@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Logger {
 
@@ -86,6 +87,22 @@ public class Logger {
 
         if (ruta != null && (ruta.length <= LIMITE_RUTA_COMPLETA || iter % CADA_CUANTAS_RUTA == 0)) {
             linea("    Ruta: " + texto(ruta));
+        }
+    }
+
+    /** Una generación del evolutivo: estadísticas de la población y, si hay nuevo mejor global, su ruta. */
+    public void generacion(int gen, long evaluaciones, double mejor, double media, double peor,
+                           int eliteReinsertada, String nota, int[] rutaMejor) {
+        linea("Generacion " + gen + " | evaluaciones=" + evaluaciones
+                + " | mejor=" + String.format(Locale.US, "%.0f", mejor)
+                + " | media=" + String.format(Locale.US, "%.2f", media)
+                + " | peor=" + String.format(Locale.US, "%.0f", peor)
+                + " | elite reinsertada=" + eliteReinsertada
+                + (nota == null ? "" : " | " + nota));
+
+        if (nota != null && rutaMejor != null
+                && (rutaMejor.length <= LIMITE_RUTA_COMPLETA || gen % CADA_CUANTAS_RUTA == 0)) {
+            linea("    Ruta: " + texto(rutaMejor));
         }
     }
 

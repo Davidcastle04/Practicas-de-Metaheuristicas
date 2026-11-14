@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            // La ruta asume que el directorio raíz de ejecución es el del proyecto (Metaheuristicas_P1)
+            // Leemos el fichero.conf, que está en la carpeta raíz del proyecto.
             String rutaArchivo = "fichero.conf";
             File ruta = new File(rutaArchivo);
             Configuracion conf = new Configuracion(ruta);

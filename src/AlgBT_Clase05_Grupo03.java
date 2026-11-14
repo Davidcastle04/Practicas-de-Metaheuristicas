@@ -197,7 +197,9 @@ public class AlgBT_Clase05_Grupo03 {
                 actual = generarNueva(n, intensificar, memoria, dist, rnd);
                 costeActual = dist.coste(actual);
 
-                for (int[] t : tabuVivos) {
+                Iterator<int[]> itTabu = tabuVivos.iterator();
+                while (itTabu.hasNext()) {
+                    int[] t = itTabu.next();
                     memoria.set(t[0], t[1], 0);
                 }
                 tabuVivos.clear();

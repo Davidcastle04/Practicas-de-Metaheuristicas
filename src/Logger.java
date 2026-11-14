@@ -71,13 +71,13 @@ public class Logger {
         solucionInicial(Distancias.aArray(ruta), coste);
     }
 
-    /** Un paso de construcción en los greedy (una ciudad añadida). */
+    // Un paso de construcción en los greedy (una ciudad añadida).
     public void paso(int paso, int ciudad, int suma, String nota) {
         linea("Paso " + paso + ": ciudad " + ciudad + " (suma distancias = " + suma + ")"
                 + (nota == null ? "" : " " + nota));
     }
 
-    /** Un movimiento aplicado = una iteración. */
+    // Un movimiento aplicado es una iteración.
     public void iteracion(int iter, int i, int j, int ciudadA, int ciudadB,
                           int delta, double coste, int[] ruta, String nota) {
         String tipo = delta < 0 ? "MEJORA" : (delta > 0 ? "EMPEORA" : "IGUAL");
@@ -90,7 +90,7 @@ public class Logger {
         }
     }
 
-    /** Una generación del evolutivo: estadísticas de la población y, si hay nuevo mejor global, su ruta. */
+    // Una generación del evolutivo: estadísticas de la población y, si hay nuevo mejor global, su ruta.
     public void generacion(int gen, long evaluaciones, double mejor, double media, double peor,
                            int eliteReinsertada, String nota, int[] rutaMejor) {
         linea("Generacion " + gen + " | evaluaciones=" + evaluaciones

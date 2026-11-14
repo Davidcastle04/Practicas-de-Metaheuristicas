@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 
-/**
- * Aqui tenemos los Enums Globales de Tipos
- */
+// Tipos de problema y de distancia que aceptamos.
 
 enum type{
     TSP
@@ -13,9 +11,7 @@ enum edge_weight_type{
 }
 
 
-/**
- * Clase para calcular la funcion euclidia
- */
+// Cálculo de la distancia euclídea.
 
 class euclideo{
     double x;
@@ -25,9 +21,7 @@ class euclideo{
     }
 }
 
-/**
- * Clase para almacenar las coordenadas
- */
+// Coordenadas de una ciudad.
 
 class Coordenadas {
     int id;
@@ -57,9 +51,7 @@ class Tuple<A, B> {
     }
 }
 
-/**
- * Aquí tenemos la clase del Dato
- */
+// Datos de una instancia leída del fichero .tsp.
 
 public class Dato {
     String NAME; // Es del problema

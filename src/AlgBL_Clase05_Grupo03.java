@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 public class AlgBL_Clase05_Grupo03 {
 
@@ -11,34 +10,34 @@ public class AlgBL_Clase05_Grupo03 {
         // Llamamos al Greedy Aleatorizado para generar la primera solución inicial
         ArrayList<Tuple<Integer, Integer>> rutaActual = AlgGRA_Clase05_Grupo03.GreedyAleatorizado(dato,k,semilla,Dataset);
 
-        // Definimos el DLB
+        // Creamos el DLB.
         int[] DLB = new int[n];
 
-        // Incializamos el DLB a 0
+        // Lo inicializamos a 0.
         for (int i = 0; i < n; i++) {
             DLB[i] = 0;
         }
 
-        // Controlamos las condiciones de parada, y además sabemos si en una pasada completa hubo alguna mejora
+        // Controlamos la parada y si en una pasada completa ha habido alguna mejora.
         int iteraciones = 0;
         boolean mejoraGlobal = true;
 
-        // Usamos un While para detenermos cuando la condicion llegue
+        // Repetimos hasta que no haya mejoras o se agoten las iteraciones.
         while (mejoraGlobal && iteraciones < maxIteraciones) {
             mejoraGlobal = false;
 
             for (int i = 0; i < n; i++) {
-                // Si nodo = 1, lo ignoramos porque no es prometedor
+                // Si el bit es 1, ignoramos la ciudad porque no es prometedora.
                 if (DLB[i] == 0) {
                     boolean improve_flag = false;
 
-                    // Exploramos el vecindario invirtiendo desde 'i' hasta 'j' el otp
+                    // Exploramos el entorno invirtiendo el tramo de 'i' a 'j'.
                     for (int j = i + 1; j < n; j++) {
 
-                        // como es simetrico, evitamos invertir por completo!!!!!!!!!!!!!!
+                        // Invertir toda la ruta no cambia el ciclo, así que lo saltamos.
                         if (i == 0 && j == n - 1) continue;
 
-                        // FACTORIZACIÓN, solo los arcos diferentes
+                        // Calculamos solo los arcos que cambian (factorización).
                         int nodoAnteriorI = rutaActual.get((i - 1 + n) % n).first;
                         int nodoI = rutaActual.get(i).first;
                         int nodoJ = rutaActual.get(j).first;
@@ -49,25 +48,25 @@ public class AlgBL_Clase05_Grupo03 {
 
                         int delta = arcosNuevos - arcosDesaparecen;
 
-                        // PRIMER MEJOR: Si el delta es negativo, el movimiento reduce el coste y lo aplicamos INMEDIATAMENTE
+                        // Primer mejor: si el delta es negativo, aplicamos el movimiento en cuanto lo encontramos.
                         if (delta < 0) {
-                            // Aplicamos el movimiento 2-opt (Invierte el subsegmento de i a j)
+                            // Aplicamos el 2-opt invirtiendo el tramo de i a j.
                             Collections.reverse(rutaActual.subList(i, j + 1));
 
-                            // Activamos ambos nodos en el DLB porque ahora su entorno ha cambiado y vuelve a ser prometedor
+                            // Reactivamos las dos ciudades porque su entorno ha cambiado.
                             DLB[i] = 0;
                             DLB[j] = 0;
-                            iteraciones++; // Cada vez que evaluamos un movimiento, sumamos una iteración ( cada vez que se aplique, no al evaluar
+                            iteraciones++; // Contamos una iteración por cada movimiento aplicado, no por evaluarlo.
                             improve_flag = true;
                             mejoraGlobal = true;
                             break;
                         }
 
-                        // Verificación parada bucle interno
+                        // Comprobamos la parada dentro del bucle interno.
                         if (iteraciones >= maxIteraciones) break;
                     }
 
-                    // Si tras probar todas las combinaciones con 'j', este nodo 'i' no mejoró nada, lo apagamos
+                    // Si ningún 'j' ha mejorado con esta ciudad, apagamos su bit.
                     if (!improve_flag) {
                         DLB[i] = 1;
                     }
@@ -79,9 +78,7 @@ public class AlgBL_Clase05_Grupo03 {
         return rutaActual;
     }
 
-    /**
-     * Calcula la matriz de distancias euclídeas (Evitando crear objetos innecesarios)
-     */
+    // Calculamos la matriz de distancias euclídeas.
     private static int[][] calcularMatrizDistancias(Dato dato) {
         int n = dato.DIMENSION;
         int[][] distancias = new int[n][n];

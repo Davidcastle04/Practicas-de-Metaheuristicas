@@ -2,14 +2,13 @@ import java.io.*;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-/*
-   Lee el fichero .conf y lanza los algoritmos sobre los archivos con cada semilla.
-   Los algoritmos de esta práctica son greedy, greedyALE, busquedaLocal y busquedaTABU.
-*/
+// Leemos el fichero.conf y lanzamos los algoritmos sobre cada archivo con cada semilla.
+// Los algoritmos son greedy, greedyALE, busquedaLocal, busquedaTABU y GEN (evolutivo generacional).
+// Los parámetros de los algoritmos se leen del fichero.conf (si falta alguno del evolutivo, avisamos y usamos el del guion).
 
 public class Configuracion {
 
-    // Mejores costes conocidos (los de las tablas del guión) para calcular la desviación
+    // Mejores costes conocidos (los de las tablas del guion) para calcular la desviación
     private static final Map<String, Integer> MEJOR_CONOCIDO = new HashMap<>();
     static {
         MEJOR_CONOCIDO.put("a280", 2579);
@@ -31,12 +30,25 @@ public class Configuracion {
     double oscilacionEst = 0.5;
     double estancamiento = 0.05;
 
-    // Evolutivo generacional: parámetros comunes y listas de valores a combinar (todas las versiones del guion)
-    ParametrosGEN baseGEN = new ParametrosGEN();
+    // Evolutivo generacional: los valores se leen del fichero.conf. Solo si falta alguno
+    // se usa el valor por defecto de aquí (el del guion) y avisamos por pantalla.
+    // Cruces, élites, kBest y kWorst son listas: se ejecutan todas las combinaciones (las 24 versiones del guion).
     List<TipoCruce> crucesGEN = new ArrayList<>(Arrays.asList(TipoCruce.OX2, TipoCruce.MOC));
     List<Integer> elitesGEN = new ArrayList<>(Arrays.asList(1, 2, 3));
     List<Integer> kBestGEN = new ArrayList<>(Arrays.asList(2, 3));
     List<Integer> kWorstGEN = new ArrayList<>(Arrays.asList(2, 3));
+
+    int tamPoblacionGEN = 100;
+    double porcAleatoriosGEN = 0.8;   // parte de la población inicial totalmente aleatoria, el resto es greedy aleatorizado
+    int kGreedyGEN = 10;              // tamaño de la lista de candidatos del greedy aleatorizado inicial
+    double probCruceGEN = 0.7;
+    double probMutacionGEN = 0.1;     // por individuo
+    double probPosOX2GEN = 0.5;       // probabilidad de elegir cada posición en OX2
+    int evaluacionesGEN = 50000;
+    double tiempoMaxGEN = 120;        // en segundos
+
+    // Claves que hemos encontrado en el fichero.conf
+    private Set<String> clavesLeidas = new HashSet<>();
 
     private interface Ejecutor {
         ArrayList<Tuple<Integer, Integer>> ejecutar(Dato dato, File archivo, Long semilla);
@@ -63,12 +75,17 @@ public class Configuracion {
                 linea = linea.trim();
                 if (linea.isEmpty() || linea.startsWith("#")) continue;
 
+                // Apuntamos la clave de la línea para saber después qué parámetros faltan.
+                if (linea.contains("=")) {
+                    clavesLeidas.add(linea.substring(0, linea.indexOf("=")).trim());
+                }
+
                 if (linea.startsWith("Archivos=")) {
                     String contenido = linea.substring("Archivos=".length()).trim();
                     String[] partes = contenido.split("\"\\s+\"");
 
-                    for (String nombreArchivo : partes) {
-                        nombreArchivo = nombreArchivo.replace("\"", "").trim();
+                    for (int i = 0; i < partes.length; i++) {
+                        String nombreArchivo = partes[i].replace("\"", "").trim();
                         File f = new File(nombreArchivo);
 
                         if (f.exists()) {
@@ -83,11 +100,11 @@ public class Configuracion {
 
                 } else if (linea.startsWith("Semilla=")) {
                     String[] partes = linea.substring("Semilla=".length()).trim().split("\\s+");
-                    for (String sem : partes) {
+                    for (int i = 0; i < partes.length; i++) {
                         try {
-                            semilla.add(Long.parseLong(sem));
+                            semilla.add(Long.parseLong(partes[i]));
                         } catch (NumberFormatException e) {
-                            System.err.println("Semilla inválida (no es un número), se ignora: " + sem);
+                            System.err.println("Semilla inválida (no es un número), se ignora: " + partes[i]);
                         }
                     }
                 } else if (linea.startsWith("k-GRA=")) {
@@ -121,28 +138,28 @@ public class Configuracion {
                     kWorstGEN = leerListaEnteros(linea, "KWorst=", kWorstGEN);
 
                 } else if (linea.startsWith("TamPoblacion=")) {
-                    baseGEN.tamPoblacion = leerEntero(linea, "TamPoblacion=", baseGEN.tamPoblacion);
+                    tamPoblacionGEN = leerEntero(linea, "TamPoblacion=", tamPoblacionGEN);
 
                 } else if (linea.startsWith("PorcAleatorios=")) {
-                    baseGEN.porcAleatorios = leerDecimal(linea, "PorcAleatorios=", baseGEN.porcAleatorios);
+                    porcAleatoriosGEN = leerDecimal(linea, "PorcAleatorios=", porcAleatoriosGEN);
 
                 } else if (linea.startsWith("k-GEN=")) {
-                    baseGEN.kGreedy = leerEntero(linea, "k-GEN=", baseGEN.kGreedy);
+                    kGreedyGEN = leerEntero(linea, "k-GEN=", kGreedyGEN);
 
                 } else if (linea.startsWith("ProbCruce=")) {
-                    baseGEN.probCruce = leerDecimal(linea, "ProbCruce=", baseGEN.probCruce);
+                    probCruceGEN = leerDecimal(linea, "ProbCruce=", probCruceGEN);
 
                 } else if (linea.startsWith("ProbMutacion=")) {
-                    baseGEN.probMutacion = leerDecimal(linea, "ProbMutacion=", baseGEN.probMutacion);
+                    probMutacionGEN = leerDecimal(linea, "ProbMutacion=", probMutacionGEN);
 
                 } else if (linea.startsWith("ProbPosOX2=")) {
-                    baseGEN.probPosicionesOX2 = leerDecimal(linea, "ProbPosOX2=", baseGEN.probPosicionesOX2);
+                    probPosOX2GEN = leerDecimal(linea, "ProbPosOX2=", probPosOX2GEN);
 
                 } else if (linea.startsWith("EvaluacionesGEN=")) {
-                    baseGEN.maxEvaluaciones = leerEntero(linea, "EvaluacionesGEN=", (int) baseGEN.maxEvaluaciones);
+                    evaluacionesGEN = leerEntero(linea, "EvaluacionesGEN=", evaluacionesGEN);
 
                 } else if (linea.startsWith("TiempoMaxGEN=")) {
-                    baseGEN.maxSegundos = leerDecimal(linea, "TiempoMaxGEN=", baseGEN.maxSegundos);
+                    tiempoMaxGEN = leerDecimal(linea, "TiempoMaxGEN=", tiempoMaxGEN);
                 }
             }
 
@@ -162,19 +179,78 @@ public class Configuracion {
         System.out.println("\tEstancamiento --> " + estancamiento);
         System.out.println("\tGEN cruces --> " + crucesGEN + " | elites --> " + elitesGEN
                 + " | kBest --> " + kBestGEN + " | kWorst --> " + kWorstGEN);
-        System.out.println("\tGEN poblacion --> " + baseGEN.tamPoblacion + " (" + baseGEN.porcAleatorios
-                + " aleatorios, resto greedy k=" + baseGEN.kGreedy + ") | cruce --> " + baseGEN.probCruce
-                + " | mutacion --> " + baseGEN.probMutacion + " | posiciones OX2 --> " + baseGEN.probPosicionesOX2);
-        System.out.println("\tGEN parada --> " + baseGEN.maxEvaluaciones + " evaluaciones o "
-                + baseGEN.maxSegundos + " s");
+        System.out.println("\tGEN poblacion --> " + tamPoblacionGEN + " (" + porcAleatoriosGEN
+                + " aleatorios, resto greedy k=" + kGreedyGEN + ") | cruce --> " + probCruceGEN
+                + " | mutacion --> " + probMutacionGEN + " | posiciones OX2 --> " + probPosOX2GEN);
+        System.out.println("\tGEN parada --> " + evaluacionesGEN + " evaluaciones o "
+                + tiempoMaxGEN + " s");
         System.out.println("*********************************************************************");
         System.out.println("\u001B[0m");
 
-        ArrayList<Long> semillas = new ArrayList<>(semilla);
-
-        for (String alg : algoritmos) {
-            evaluacion(alg, semillas);
+        // Si vamos a lanzar el evolutivo, avisamos de los parámetros que no están en el fichero.conf
+        // y comprobamos que los valores tienen sentido.
+        if (algoritmos.contains("GEN")) {
+            avisarParametrosPorDefecto();
+            comprobarParametrosGEN();
         }
+
+        ArrayList<Long> semillas = new ArrayList<>(semilla);
+        ArrayList<String> listaAlgoritmos = new ArrayList<>(algoritmos);
+
+        for (int i = 0; i < listaAlgoritmos.size(); i++) {
+            evaluacion(listaAlgoritmos.get(i), semillas);
+        }
+    }
+
+    // Si falta algún parámetro del evolutivo en el fichero.conf, lo indicamos y usamos el valor por defecto.
+    private void avisarParametrosPorDefecto() {
+        String[] claves = {"Cruces", "Elites", "KBest", "KWorst", "TamPoblacion", "PorcAleatorios", "k-GEN",
+                "ProbCruce", "ProbMutacion", "ProbPosOX2", "EvaluacionesGEN", "TiempoMaxGEN"};
+        String[] valores = {crucesGEN.toString(), elitesGEN.toString(), kBestGEN.toString(), kWorstGEN.toString(),
+                "" + tamPoblacionGEN, "" + porcAleatoriosGEN, "" + kGreedyGEN, "" + probCruceGEN,
+                "" + probMutacionGEN, "" + probPosOX2GEN, "" + evaluacionesGEN, "" + tiempoMaxGEN};
+
+        for (int i = 0; i < claves.length; i++) {
+            if (!clavesLeidas.contains(claves[i])) {
+                System.out.println("Parametros por defecto: " + claves[i] + " = " + valores[i]);
+            }
+        }
+    }
+
+    // Comprobamos que los parámetros del evolutivo tienen sentido.
+    private void comprobarParametrosGEN() {
+        if (tamPoblacionGEN < 2) {
+            throw new IllegalArgumentException("TamPoblacion tiene que ser al menos 2");
+        }
+        for (int i = 0; i < elitesGEN.size(); i++) {
+            if (elitesGEN.get(i) < 0 || elitesGEN.get(i) >= tamPoblacionGEN) {
+                throw new IllegalArgumentException("Elite fuera de rango: " + elitesGEN.get(i));
+            }
+        }
+        for (int i = 0; i < kBestGEN.size(); i++) {
+            if (kBestGEN.get(i) < 1) {
+                throw new IllegalArgumentException("KBest tiene que ser al menos 1");
+            }
+        }
+        for (int i = 0; i < kWorstGEN.size(); i++) {
+            if (kWorstGEN.get(i) < 1) {
+                throw new IllegalArgumentException("KWorst tiene que ser al menos 1");
+            }
+        }
+        if (kGreedyGEN < 1) {
+            throw new IllegalArgumentException("k-GEN tiene que ser al menos 1");
+        }
+        if (!esProbabilidad(porcAleatoriosGEN) || !esProbabilidad(probCruceGEN)
+                || !esProbabilidad(probMutacionGEN) || !esProbabilidad(probPosOX2GEN)) {
+            throw new IllegalArgumentException("PorcAleatorios, ProbCruce, ProbMutacion y ProbPosOX2 tienen que estar entre 0 y 1");
+        }
+        if (evaluacionesGEN < 1 || tiempoMaxGEN <= 0) {
+            throw new IllegalArgumentException("EvaluacionesGEN y TiempoMaxGEN tienen que ser mayores que 0");
+        }
+    }
+
+    private static boolean esProbabilidad(double v) {
+        return v >= 0.0 && v <= 1.0;
     }
 
     private static int leerEntero(String linea, String clave, int porDefecto) {
@@ -189,11 +265,12 @@ public class Configuracion {
 
     private static List<Integer> leerListaEnteros(String linea, String clave, List<Integer> porDefecto) {
         List<Integer> lista = new ArrayList<>();
-        for (String v : linea.substring(clave.length()).trim().split("\\s+")) {
+        String[] partes = linea.substring(clave.length()).trim().split("\\s+");
+        for (int i = 0; i < partes.length; i++) {
             try {
-                lista.add(Integer.parseInt(v));
+                lista.add(Integer.parseInt(partes[i]));
             } catch (NumberFormatException e) {
-                System.err.println("Valor invalido en " + clave + " (" + v + "), se ignora");
+                System.err.println("Valor invalido en " + clave + " (" + partes[i] + "), se ignora");
             }
         }
         return lista.isEmpty() ? porDefecto : lista;
@@ -201,11 +278,12 @@ public class Configuracion {
 
     private static List<TipoCruce> leerCruces(String linea, String clave, List<TipoCruce> porDefecto) {
         List<TipoCruce> lista = new ArrayList<>();
-        for (String v : linea.substring(clave.length()).trim().split("\\s+")) {
+        String[] partes = linea.substring(clave.length()).trim().split("\\s+");
+        for (int i = 0; i < partes.length; i++) {
             try {
-                lista.add(TipoCruce.valueOf(v.toUpperCase()));
+                lista.add(TipoCruce.valueOf(partes[i].toUpperCase()));
             } catch (IllegalArgumentException e) {
-                System.err.println("Cruce desconocido en " + clave + " (" + v + "), los validos son OX2 y MOC");
+                System.err.println("Cruce desconocido en " + clave + " (" + partes[i] + "), los validos son OX2 y MOC");
             }
         }
         return lista.isEmpty() ? porDefecto : lista;
@@ -302,7 +380,7 @@ public class Configuracion {
         return new Dato(name, typeValue, dimension, comment, edgeWeightTypeValue, listaCoordenadas);
     }
 
-    // Coste de una ruta cerrada con distancias euclídeas redondeadas
+    // Calculamos el coste de una ruta cerrada con distancias euclídeas redondeadas.
     public static double funcionEvaluatoria(Dato dato_original, ArrayList<Tuple<Integer, Integer>> solucion) {
         double costeTotal = 0;
         int n = solucion.size();
@@ -357,16 +435,23 @@ public class Configuracion {
         }
     }
 
-    // Lanza todas las versiones del evolutivo (cruce x elite x kWorst x kBest), en el orden del guion
-    private void evaluacionGEN(ArrayList<Long> semillas) {
-        for (TipoCruce cruce : crucesGEN) {
-            for (int elite : elitesGEN) {
-                for (int kWorst : kWorstGEN) {
-                    for (int kBest : kBestGEN) {
-                        final ParametrosGEN p = baseGEN.variante(cruce, elite, kBest, kWorst);
 
-                        ejecutarAlgoritmo("EVALUACION " + p.nombre(), "\u001B[38;5;203m", true, semillas,
-                                (dato, f, s) -> AlgGEN_Clase05_Grupo03.Generacional(dato, p, s, f.getName()));
+    // Lanzamos todas las combinaciones de cruce, élite, kWorst y kBest que hay en el fichero.conf.
+    private void evaluacionGEN(ArrayList<Long> semillas) {
+        for (int c = 0; c < crucesGEN.size(); c++) {
+            for (int e = 0; e < elitesGEN.size(); e++) {
+                for (int w = 0; w < kWorstGEN.size(); w++) {
+                    for (int b = 0; b < kBestGEN.size(); b++) {
+                        final TipoCruce cruce = crucesGEN.get(c);
+                        final int elite = elitesGEN.get(e);
+                        final int kWorst = kWorstGEN.get(w);
+                        final int kBest = kBestGEN.get(b);
+
+                        String nombre = AlgGEN_Clase05_Grupo03.nombreVersion(cruce, elite, kBest, kWorst);
+
+                        ejecutarAlgoritmo("EVALUACION " + nombre, "\u001B[38;5;203m", true, semillas,
+                                (dato, f, s) -> AlgGEN_Clase05_Grupo03.Generacional(dato, this, cruce, elite,
+                                        kBest, kWorst, s, f.getName()));
                     }
                 }
             }
@@ -384,7 +469,7 @@ public class Configuracion {
             return;
         }
 
-        // el greedy no es aleatorio, se ejecuta una sola vez por archivo
+        // El greedy no es aleatorio, así que lo ejecutamos una sola vez por archivo.
         ArrayList<Long> lista = new ArrayList<>();
         if (usaSemilla) {
             lista.addAll(semillas);
@@ -392,14 +477,18 @@ public class Configuracion {
             lista.add(null);
         }
 
-        for (File archivoActual : archivos) {
+        ArrayList<File> listaArchivos = new ArrayList<>(archivos);
+
+        for (int a = 0; a < listaArchivos.size(); a++) {
+            File archivoActual = listaArchivos.get(a);
             Dato dato = cargar(archivoActual);
             System.out.println("Archivo " + archivoActual.getName());
 
             ArrayList<Double> costes = new ArrayList<>();
             ArrayList<Double> tiempos = new ArrayList<>();
 
-            for (Long s : lista) {
+            for (int i = 0; i < lista.size(); i++) {
+                Long s = lista.get(i);
                 long inicio = System.nanoTime();
                 ArrayList<Tuple<Integer, Integer>> resultado = algoritmo.ejecutar(dato, archivoActual, s);
                 double ms = (System.nanoTime() - inicio) / 1e6;
@@ -433,16 +522,20 @@ public class Configuracion {
 
     private static double media(List<Double> valores) {
         double suma = 0;
-        for (double v : valores) suma += v;
+        for (int i = 0; i < valores.size(); i++) {
+            suma += valores.get(i);
+        }
         return suma / valores.size();
     }
 
-    // desviación típica muestral (n-1), como la de Excel
+    // Desviación típica muestral (n-1), como la de Excel.
     private static double desvTipica(List<Double> valores) {
         if (valores.size() < 2) return 0;
         double m = media(valores);
         double suma = 0;
-        for (double v : valores) suma += (v - m) * (v - m);
+        for (int i = 0; i < valores.size(); i++) {
+            suma += (valores.get(i) - m) * (valores.get(i) - m);
+        }
         return Math.sqrt(suma / (valores.size() - 1));
     }
 }

@@ -1,9 +1,6 @@
 import java.util.ArrayList;
 
-/**
- * Distancias euclídeas (EUC_2D redondeadas) del problema y utilidades comunes
- * a los cuatro algoritmos.
- */
+// Distancias euclídeas (EUC_2D redondeadas) del problema y utilidades comunes a todos los algoritmos.
 public class Distancias {
 
     // con más ciudades que esto la matriz no cabe en memoria (d18512 serían 1,3 GB)
@@ -80,7 +77,7 @@ public class Distancias {
         return sumas;
     }
 
-    /** Coste de la ruta cerrada (la última ciudad vuelve a la primera). */
+    // Coste de la ruta cerrada (la última ciudad vuelve a la primera).
     public double coste(int[] ruta) {
         double total = 0;
         for (int i = 0; i < ruta.length; i++) {
@@ -89,7 +86,7 @@ public class Distancias {
         return total;
     }
 
-    /** Invierte el tramo [i, j] de la ruta (movimiento 2-opt). */
+    // Invertimos el tramo [i, j] de la ruta (movimiento 2-opt).
     public static void invertir(int[] ruta, int i, int j) {
         while (i < j) {
             int aux = ruta[i];
@@ -111,8 +108,8 @@ public class Distancias {
     public ArrayList<Tuple<Integer, Integer>> aTuplas(int[] ruta) {
         int[] s = sumas();
         ArrayList<Tuple<Integer, Integer>> res = new ArrayList<>(ruta.length);
-        for (int c : ruta) {
-            res.add(new Tuple<>(c, s[c]));
+        for (int i = 0; i < ruta.length; i++) {
+            res.add(new Tuple<>(ruta[i], s[ruta[i]]));
         }
         return res;
     }

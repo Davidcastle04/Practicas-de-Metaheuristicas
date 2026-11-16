@@ -1,0 +1,788 @@
+/Users/david/Library/Java/JavaVirtualMachines/openjdk-25.0.1/Contents/Home/bin/java -javaagent:/Users/david/Applications/IntelliJ IDEA Ultimate.app/Contents/lib/idea_rt.jar=55989 -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath /Users/david/IdeaProjects/Practicas-de-Metaheuristicas/out/production/Metaheuristicas_P1 Main
+
+*********************** ARCHIVO CONFIGURACION ***********************
+	ARCHIVOS --> [src/Archivos/a280.tsp, src/Archivos/ch130.tsp, src/Archivos/pr144.tsp, src/Archivos/d18512.tsp, src/Archivos/u1060.tsp]
+	ALGORITMOS --> [greedy, greedyALE, busquedaLocal, busquedaTABU, GEN]
+	SEMILLAS --> [78026515, 77433388, 78023388]
+	k_GRA --> 5
+	IteracionesBL --> 10000
+	IteracionesBT --> 10000
+	Tenencia tabu --> 10
+	Oscilacion estrategica --> 0.5
+	Estancamiento --> 0.05
+	GEN cruces --> [OX2, MOC] | elites --> [1, 2, 3] | kBest --> [2, 3] | kWorst --> [2, 3]
+	GEN poblacion --> 100 (0.8 aleatorios, resto greedy k=10) | cruce --> 0.7 | mutacion --> 0.1 | posiciones OX2 --> 0.5
+	GEN parada --> 50000 evaluaciones o 120.0 s
+*********************************************************************
+
+
+---------------------- EVALUACION GREEDY ----------------------
+Archivo a280.tsp
+	-> Coste: 29999 | Tiempo: 36 ms | Desviacion: 1063,20%
+Archivo ch130.tsp
+	-> Coste: 40396 | Tiempo: 1 ms | Desviacion: 561,15%
+Archivo pr144.tsp
+	-> Coste: 640775 | Tiempo: 1 ms | Desviacion: 994,65%
+Archivo d18512.tsp
+	-> Coste: 51283093 | Tiempo: 698 ms | Desviacion: 7847,93%
+Archivo u1060.tsp
+	-> Coste: 5670071 | Tiempo: 7 ms | Desviacion: 2430,22%
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GREEDY ALEATORIZADO ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 28001 | Tiempo: 3 ms | Desviacion: 985,73%
+	-> Semilla 77433388 | Coste: 28967 | Tiempo: 1 ms | Desviacion: 1023,19%
+	-> Semilla 78023388 | Coste: 30245 | Tiempo: 1 ms | Desviacion: 1072,74%
+	   Media: 29071,00 (desviacion 1027,22%) | Desv. tipica: 1125,61 | Tiempo medio: 2 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 40374 | Tiempo: 1 ms | Desviacion: 560,79%
+	-> Semilla 77433388 | Coste: 44505 | Tiempo: 1 ms | Desviacion: 628,40%
+	-> Semilla 78023388 | Coste: 42588 | Tiempo: 1 ms | Desviacion: 597,02%
+	   Media: 42489,00 (desviacion 595,40%) | Desv. tipica: 2067,28 | Tiempo medio: 1 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 635787 | Tiempo: 1 ms | Desviacion: 986,13%
+	-> Semilla 77433388 | Coste: 639219 | Tiempo: 1 ms | Desviacion: 991,99%
+	-> Semilla 78023388 | Coste: 683725 | Tiempo: 1 ms | Desviacion: 1068,02%
+	   Media: 652910,33 (desviacion 1015,38%) | Desv. tipica: 26741,40 | Tiempo medio: 1 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 51538647 | Tiempo: 635 ms | Desviacion: 7887,54%
+	-> Semilla 77433388 | Coste: 51637687 | Tiempo: 35 ms | Desviacion: 7902,89%
+	-> Semilla 78023388 | Coste: 51387461 | Tiempo: 32 ms | Desviacion: 7864,11%
+	   Media: 51521265,00 (desviacion 7884,85%) | Desv. tipica: 126015,33 | Tiempo medio: 234 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 5493670 | Tiempo: 4 ms | Desviacion: 2351,50%
+	-> Semilla 77433388 | Coste: 5622433 | Tiempo: 1 ms | Desviacion: 2408,96%
+	-> Semilla 78023388 | Coste: 5667561 | Tiempo: 1 ms | Desviacion: 2429,10%
+	   Media: 5594554,67 (desviacion 2396,52%) | Desv. tipica: 90235,36 | Tiempo medio: 2 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION BUSQUEDA LOCAL ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 3674 | Tiempo: 23 ms | Desviacion: 42,46%
+	-> Semilla 77433388 | Coste: 3996 | Tiempo: 5 ms | Desviacion: 54,94%
+	-> Semilla 78023388 | Coste: 3783 | Tiempo: 6 ms | Desviacion: 46,68%
+	   Media: 3817,67 (desviacion 48,03%) | Desv. tipica: 163,78 | Tiempo medio: 11 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 8957 | Tiempo: 1 ms | Desviacion: 46,60%
+	-> Semilla 77433388 | Coste: 8680 | Tiempo: 1 ms | Desviacion: 42,06%
+	-> Semilla 78023388 | Coste: 8622 | Tiempo: 1 ms | Desviacion: 41,11%
+	   Media: 8753,00 (desviacion 43,26%) | Desv. tipica: 179,03 | Tiempo medio: 1 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 111395 | Tiempo: 2 ms | Desviacion: 90,30%
+	-> Semilla 77433388 | Coste: 114845 | Tiempo: 2 ms | Desviacion: 96,19%
+	-> Semilla 78023388 | Coste: 103327 | Tiempo: 2 ms | Desviacion: 76,52%
+	   Media: 109855,67 (desviacion 87,67%) | Desv. tipica: 5911,28 | Tiempo medio: 2 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 45030219 | Tiempo: 1673 ms | Desviacion: 6878,85%
+	-> Semilla 77433388 | Coste: 45202975 | Tiempo: 1229 ms | Desviacion: 6905,63%
+	-> Semilla 78023388 | Coste: 44869415 | Tiempo: 797 ms | Desviacion: 6853,93%
+	   Media: 45034203,00 (desviacion 6879,47%) | Desv. tipica: 166815,68 | Tiempo medio: 1233 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 366118 | Tiempo: 37 ms | Desviacion: 63,38%
+	-> Semilla 77433388 | Coste: 364829 | Tiempo: 24 ms | Desviacion: 62,80%
+	-> Semilla 78023388 | Coste: 362400 | Tiempo: 23 ms | Desviacion: 61,72%
+	   Media: 364449,00 (desviacion 62,63%) | Desv. tipica: 1887,90 | Tiempo medio: 28 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION BUSQUEDA TABU ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 2718 | Tiempo: 2080 ms | Desviacion: 5,39%
+	-> Semilla 77433388 | Coste: 2740 | Tiempo: 1929 ms | Desviacion: 6,24%
+	-> Semilla 78023388 | Coste: 2758 | Tiempo: 2175 ms | Desviacion: 6,94%
+	   Media: 2738,67 (desviacion 6,19%) | Desv. tipica: 20,03 | Tiempo medio: 2061 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 6351 | Tiempo: 547 ms | Desviacion: 3,94%
+	-> Semilla 77433388 | Coste: 6363 | Tiempo: 838 ms | Desviacion: 4,14%
+	-> Semilla 78023388 | Coste: 6339 | Tiempo: 894 ms | Desviacion: 3,75%
+	   Media: 6351,00 (desviacion 3,94%) | Desv. tipica: 12,00 | Tiempo medio: 760 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 58722 | Tiempo: 1088 ms | Desviacion: 0,32%
+	-> Semilla 77433388 | Coste: 59258 | Tiempo: 916 ms | Desviacion: 1,23%
+	-> Semilla 78023388 | Coste: 58780 | Tiempo: 1006 ms | Desviacion: 0,42%
+	   Media: 58920,00 (desviacion 0,65%) | Desv. tipica: 294,15 | Tiempo medio: 1004 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46395844 | Tiempo: 7575 ms | Desviacion: 7090,50%
+	-> Semilla 77433388 | Coste: 46664554 | Tiempo: 5913 ms | Desviacion: 7132,15%
+	-> Semilla 78023388 | Coste: 47119377 | Tiempo: 5904 ms | Desviacion: 7202,64%
+	   Media: 46726591,67 (desviacion 7141,76%) | Desv. tipica: 365734,20 | Tiempo medio: 6464 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 247049 | Tiempo: 10655 ms | Desviacion: 10,24%
+	-> Semilla 77433388 | Coste: 247824 | Tiempo: 10590 ms | Desviacion: 10,59%
+	-> Semilla 78023388 | Coste: 247736 | Tiempo: 11108 ms | Desviacion: 10,55%
+	   Media: 247536,33 (desviacion 10,46%) | Desv. tipica: 424,33 | Tiempo medio: 10784 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E1_kB2_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 10556 | Tiempo: 389 ms | Desviacion: 309,31%
+	-> Semilla 77433388 | Coste: 9303 | Tiempo: 376 ms | Desviacion: 260,72%
+	-> Semilla 78023388 | Coste: 10882 | Tiempo: 376 ms | Desviacion: 321,95%
+	   Media: 10247,00 (desviacion 297,32%) | Desv. tipica: 833,62 | Tiempo medio: 380 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 11588 | Tiempo: 171 ms | Desviacion: 89,66%
+	-> Semilla 77433388 | Coste: 13028 | Tiempo: 168 ms | Desviacion: 113,22%
+	-> Semilla 78023388 | Coste: 13457 | Tiempo: 171 ms | Desviacion: 120,25%
+	   Media: 12691,00 (desviacion 107,71%) | Desv. tipica: 979,01 | Tiempo medio: 170 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 199984 | Tiempo: 182 ms | Desviacion: 241,64%
+	-> Semilla 77433388 | Coste: 142485 | Tiempo: 184 ms | Desviacion: 143,41%
+	-> Semilla 78023388 | Coste: 188315 | Tiempo: 182 ms | Desviacion: 221,70%
+	   Media: 176928,00 (desviacion 202,25%) | Desv. tipica: 30393,78 | Tiempo medio: 183 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 49430333 | Tiempo: 49051 ms | Desviacion: 7560,79%
+	-> Semilla 77433388 | Coste: 49673403 | Tiempo: 47525 ms | Desviacion: 7598,46%
+	-> Semilla 78023388 | Coste: 49919307 | Tiempo: 44906 ms | Desviacion: 7636,57%
+	   Media: 49674347,67 (desviacion 7598,61%) | Desv. tipica: 244488,37 | Tiempo medio: 47161 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3236874 | Tiempo: 1431 ms | Desviacion: 1344,43%
+	-> Semilla 77433388 | Coste: 3680105 | Tiempo: 1532 ms | Desviacion: 1542,21%
+	-> Semilla 78023388 | Coste: 3788267 | Tiempo: 1537 ms | Desviacion: 1590,48%
+	   Media: 3568415,33 (desviacion 1492,37%) | Desv. tipica: 292172,03 | Tiempo medio: 1500 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E1_kB3_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12596 | Tiempo: 335 ms | Desviacion: 388,41%
+	-> Semilla 77433388 | Coste: 12970 | Tiempo: 337 ms | Desviacion: 402,91%
+	-> Semilla 78023388 | Coste: 11284 | Tiempo: 338 ms | Desviacion: 337,53%
+	   Media: 12283,33 (desviacion 376,28%) | Desv. tipica: 885,42 | Tiempo medio: 337 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 17355 | Tiempo: 162 ms | Desviacion: 184,04%
+	-> Semilla 77433388 | Coste: 16322 | Tiempo: 160 ms | Desviacion: 167,14%
+	-> Semilla 78023388 | Coste: 15732 | Tiempo: 162 ms | Desviacion: 157,48%
+	   Media: 16469,67 (desviacion 169,55%) | Desv. tipica: 821,51 | Tiempo medio: 161 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 230793 | Tiempo: 175 ms | Desviacion: 294,27%
+	-> Semilla 77433388 | Coste: 189739 | Tiempo: 180 ms | Desviacion: 224,14%
+	-> Semilla 78023388 | Coste: 246120 | Tiempo: 181 ms | Desviacion: 320,45%
+	   Media: 222217,33 (desviacion 279,62%) | Desv. tipica: 29152,37 | Tiempo medio: 179 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 45903845 | Tiempo: 44410 ms | Desviacion: 7014,25%
+	-> Semilla 77433388 | Coste: 45581805 | Tiempo: 42432 ms | Desviacion: 6964,34%
+	-> Semilla 78023388 | Coste: 45538013 | Tiempo: 44395 ms | Desviacion: 6957,55%
+	   Media: 45674554,33 (desviacion 6978,71%) | Desv. tipica: 199775,10 | Tiempo medio: 43746 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3025954 | Tiempo: 1310 ms | Desviacion: 1250,31%
+	-> Semilla 77433388 | Coste: 3184071 | Tiempo: 1320 ms | Desviacion: 1320,86%
+	-> Semilla 78023388 | Coste: 3274466 | Tiempo: 1314 ms | Desviacion: 1361,20%
+	   Media: 3161497,00 (desviacion 1310,79%) | Desv. tipica: 125784,51 | Tiempo medio: 1315 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E1_kB2_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 9241 | Tiempo: 375 ms | Desviacion: 258,32%
+	-> Semilla 77433388 | Coste: 8846 | Tiempo: 373 ms | Desviacion: 243,00%
+	-> Semilla 78023388 | Coste: 9509 | Tiempo: 368 ms | Desviacion: 268,71%
+	   Media: 9198,67 (desviacion 256,68%) | Desv. tipica: 333,52 | Tiempo medio: 372 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 13957 | Tiempo: 168 ms | Desviacion: 128,43%
+	-> Semilla 77433388 | Coste: 13792 | Tiempo: 172 ms | Desviacion: 125,73%
+	-> Semilla 78023388 | Coste: 13990 | Tiempo: 171 ms | Desviacion: 128,97%
+	   Media: 13913,00 (desviacion 127,71%) | Desv. tipica: 106,08 | Tiempo medio: 170 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 178720 | Tiempo: 184 ms | Desviacion: 205,31%
+	-> Semilla 77433388 | Coste: 214718 | Tiempo: 185 ms | Desviacion: 266,81%
+	-> Semilla 78023388 | Coste: 158159 | Tiempo: 186 ms | Desviacion: 170,19%
+	   Media: 183865,67 (desviacion 214,10%) | Desv. tipica: 28628,46 | Tiempo medio: 185 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 49365971 | Tiempo: 47730 ms | Desviacion: 7550,82%
+	-> Semilla 77433388 | Coste: 50049190 | Tiempo: 47851 ms | Desviacion: 7656,70%
+	-> Semilla 78023388 | Coste: 49412209 | Tiempo: 47268 ms | Desviacion: 7557,98%
+	   Media: 49609123,33 (desviacion 7588,50%) | Desv. tipica: 381809,50 | Tiempo medio: 47616 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3916265 | Tiempo: 1522 ms | Desviacion: 1647,60%
+	-> Semilla 77433388 | Coste: 3918443 | Tiempo: 1530 ms | Desviacion: 1648,57%
+	-> Semilla 78023388 | Coste: 3739565 | Tiempo: 1545 ms | Desviacion: 1568,75%
+	   Media: 3858091,00 (desviacion 1621,64%) | Desv. tipica: 102652,30 | Tiempo medio: 1532 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E1_kB3_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12967 | Tiempo: 339 ms | Desviacion: 402,79%
+	-> Semilla 77433388 | Coste: 13588 | Tiempo: 336 ms | Desviacion: 426,87%
+	-> Semilla 78023388 | Coste: 11980 | Tiempo: 341 ms | Desviacion: 364,52%
+	   Media: 12845,00 (desviacion 398,06%) | Desv. tipica: 810,91 | Tiempo medio: 339 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15829 | Tiempo: 161 ms | Desviacion: 159,07%
+	-> Semilla 77433388 | Coste: 16140 | Tiempo: 159 ms | Desviacion: 164,16%
+	-> Semilla 78023388 | Coste: 16044 | Tiempo: 160 ms | Desviacion: 162,59%
+	   Media: 16004,33 (desviacion 161,94%) | Desv. tipica: 159,25 | Tiempo medio: 160 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 221169 | Tiempo: 175 ms | Desviacion: 277,83%
+	-> Semilla 77433388 | Coste: 178046 | Tiempo: 173 ms | Desviacion: 204,16%
+	-> Semilla 78023388 | Coste: 251762 | Tiempo: 174 ms | Desviacion: 330,09%
+	   Media: 216992,33 (desviacion 270,69%) | Desv. tipica: 37035,06 | Tiempo medio: 174 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46090082 | Tiempo: 43438 ms | Desviacion: 7043,11%
+	-> Semilla 77433388 | Coste: 45705282 | Tiempo: 43783 ms | Desviacion: 6983,48%
+	-> Semilla 78023388 | Coste: 46158724 | Tiempo: 43212 ms | Desviacion: 7053,75%
+	   Media: 45984696,00 (desviacion 7026,78%) | Desv. tipica: 244401,45 | Tiempo medio: 43477 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3037642 | Tiempo: 1335 ms | Desviacion: 1255,52%
+	-> Semilla 77433388 | Coste: 2951651 | Tiempo: 1416 ms | Desviacion: 1217,15%
+	-> Semilla 78023388 | Coste: 2994891 | Tiempo: 1338 ms | Desviacion: 1236,44%
+	   Media: 2994728,00 (desviacion 1236,37%) | Desv. tipica: 42995,73 | Tiempo medio: 1363 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E2_kB2_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 11477 | Tiempo: 368 ms | Desviacion: 345,02%
+	-> Semilla 77433388 | Coste: 11691 | Tiempo: 356 ms | Desviacion: 353,32%
+	-> Semilla 78023388 | Coste: 11629 | Tiempo: 366 ms | Desviacion: 350,91%
+	   Media: 11599,00 (desviacion 349,75%) | Desv. tipica: 110,11 | Tiempo medio: 363 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 13877 | Tiempo: 170 ms | Desviacion: 127,12%
+	-> Semilla 77433388 | Coste: 12086 | Tiempo: 171 ms | Desviacion: 97,81%
+	-> Semilla 78023388 | Coste: 12816 | Tiempo: 170 ms | Desviacion: 109,75%
+	   Media: 12926,33 (desviacion 111,56%) | Desv. tipica: 900,58 | Tiempo medio: 170 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 190336 | Tiempo: 193 ms | Desviacion: 225,16%
+	-> Semilla 77433388 | Coste: 157834 | Tiempo: 187 ms | Desviacion: 169,63%
+	-> Semilla 78023388 | Coste: 194332 | Tiempo: 291 ms | Desviacion: 231,98%
+	   Media: 180834,00 (desviacion 208,92%) | Desv. tipica: 20018,54 | Tiempo medio: 224 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 48420498 | Tiempo: 47314 ms | Desviacion: 7404,28%
+	-> Semilla 77433388 | Coste: 48385210 | Tiempo: 45232 ms | Desviacion: 7398,82%
+	-> Semilla 78023388 | Coste: 48587014 | Tiempo: 46907 ms | Desviacion: 7430,09%
+	   Media: 48464240,67 (desviacion 7411,06%) | Desv. tipica: 107778,84 | Tiempo medio: 46484 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3535808 | Tiempo: 1518 ms | Desviacion: 1477,82%
+	-> Semilla 77433388 | Coste: 3467799 | Tiempo: 1491 ms | Desviacion: 1447,48%
+	-> Semilla 78023388 | Coste: 3081958 | Tiempo: 1480 ms | Desviacion: 1275,30%
+	   Media: 3361855,00 (desviacion 1400,20%) | Desv. tipica: 244771,43 | Tiempo medio: 1496 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E2_kB3_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12480 | Tiempo: 336 ms | Desviacion: 383,91%
+	-> Semilla 77433388 | Coste: 13012 | Tiempo: 338 ms | Desviacion: 404,54%
+	-> Semilla 78023388 | Coste: 12692 | Tiempo: 339 ms | Desviacion: 392,13%
+	   Media: 12728,00 (desviacion 393,52%) | Desv. tipica: 267,82 | Tiempo medio: 338 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 16058 | Tiempo: 161 ms | Desviacion: 162,82%
+	-> Semilla 77433388 | Coste: 15669 | Tiempo: 162 ms | Desviacion: 156,45%
+	-> Semilla 78023388 | Coste: 19573 | Tiempo: 159 ms | Desviacion: 220,34%
+	   Media: 17100,00 (desviacion 179,87%) | Desv. tipica: 2150,49 | Tiempo medio: 161 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 232977 | Tiempo: 178 ms | Desviacion: 298,00%
+	-> Semilla 77433388 | Coste: 210708 | Tiempo: 177 ms | Desviacion: 259,96%
+	-> Semilla 78023388 | Coste: 247001 | Tiempo: 177 ms | Desviacion: 321,96%
+	   Media: 230228,67 (desviacion 293,30%) | Desv. tipica: 18301,93 | Tiempo medio: 177 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 45758354 | Tiempo: 44744 ms | Desviacion: 6991,70%
+	-> Semilla 77433388 | Coste: 46074434 | Tiempo: 46381 ms | Desviacion: 7040,69%
+	-> Semilla 78023388 | Coste: 46765621 | Tiempo: 43718 ms | Desviacion: 7147,81%
+	   Media: 46199469,67 (desviacion 7060,07%) | Desv. tipica: 515142,84 | Tiempo medio: 44948 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3132453 | Tiempo: 1309 ms | Desviacion: 1297,83%
+	-> Semilla 77433388 | Coste: 3153503 | Tiempo: 1318 ms | Desviacion: 1307,22%
+	-> Semilla 78023388 | Coste: 3226034 | Tiempo: 1315 ms | Desviacion: 1339,59%
+	   Media: 3170663,33 (desviacion 1314,88%) | Desv. tipica: 49093,88 | Tiempo medio: 1314 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E2_kB2_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 10994 | Tiempo: 396 ms | Desviacion: 326,29%
+	-> Semilla 77433388 | Coste: 13993 | Tiempo: 408 ms | Desviacion: 442,57%
+	-> Semilla 78023388 | Coste: 9519 | Tiempo: 354 ms | Desviacion: 269,10%
+	   Media: 11502,00 (desviacion 345,99%) | Desv. tipica: 2279,85 | Tiempo medio: 386 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15255 | Tiempo: 173 ms | Desviacion: 149,67%
+	-> Semilla 77433388 | Coste: 14267 | Tiempo: 166 ms | Desviacion: 133,50%
+	-> Semilla 78023388 | Coste: 14159 | Tiempo: 169 ms | Desviacion: 131,73%
+	   Media: 14560,33 (desviacion 138,30%) | Desv. tipica: 604,02 | Tiempo medio: 170 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 207059 | Tiempo: 186 ms | Desviacion: 253,72%
+	-> Semilla 77433388 | Coste: 165902 | Tiempo: 187 ms | Desviacion: 183,41%
+	-> Semilla 78023388 | Coste: 181179 | Tiempo: 180 ms | Desviacion: 209,51%
+	   Media: 184713,33 (desviacion 215,55%) | Desv. tipica: 20804,89 | Tiempo medio: 184 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 49104671 | Tiempo: 48964 ms | Desviacion: 7510,32%
+	-> Semilla 77433388 | Coste: 48239416 | Tiempo: 48403 ms | Desviacion: 7376,22%
+	-> Semilla 78023388 | Coste: 48403667 | Tiempo: 49160 ms | Desviacion: 7401,68%
+	   Media: 48582584,67 (desviacion 7429,41%) | Desv. tipica: 459538,03 | Tiempo medio: 48843 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3283090 | Tiempo: 1509 ms | Desviacion: 1365,05%
+	-> Semilla 77433388 | Coste: 3341758 | Tiempo: 1522 ms | Desviacion: 1391,23%
+	-> Semilla 78023388 | Coste: 3173058 | Tiempo: 1476 ms | Desviacion: 1315,95%
+	   Media: 3265968,67 (desviacion 1357,41%) | Desv. tipica: 85643,32 | Tiempo medio: 1502 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E2_kB3_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12166 | Tiempo: 402 ms | Desviacion: 371,73%
+	-> Semilla 77433388 | Coste: 13928 | Tiempo: 343 ms | Desviacion: 440,05%
+	-> Semilla 78023388 | Coste: 13362 | Tiempo: 339 ms | Desviacion: 418,11%
+	   Media: 13152,00 (desviacion 409,97%) | Desv. tipica: 899,58 | Tiempo medio: 361 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 18972 | Tiempo: 191 ms | Desviacion: 210,51%
+	-> Semilla 77433388 | Coste: 13736 | Tiempo: 162 ms | Desviacion: 124,81%
+	-> Semilla 78023388 | Coste: 14857 | Tiempo: 159 ms | Desviacion: 143,16%
+	   Media: 15855,00 (desviacion 159,49%) | Desv. tipica: 2756,98 | Tiempo medio: 171 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 232155 | Tiempo: 177 ms | Desviacion: 296,60%
+	-> Semilla 77433388 | Coste: 224711 | Tiempo: 177 ms | Desviacion: 283,88%
+	-> Semilla 78023388 | Coste: 231769 | Tiempo: 175 ms | Desviacion: 295,94%
+	   Media: 229545,00 (desviacion 292,14%) | Desv. tipica: 4190,81 | Tiempo medio: 176 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46415632 | Tiempo: 43206 ms | Desviacion: 7093,57%
+	-> Semilla 77433388 | Coste: 46104182 | Tiempo: 40861 ms | Desviacion: 7045,30%
+	-> Semilla 78023388 | Coste: 45573885 | Tiempo: 43631 ms | Desviacion: 6963,11%
+	   Media: 46031233,00 (desviacion 7033,99%) | Desv. tipica: 425588,62 | Tiempo medio: 42566 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3020245 | Tiempo: 1315 ms | Desviacion: 1247,76%
+	-> Semilla 77433388 | Coste: 2903026 | Tiempo: 1421 ms | Desviacion: 1195,45%
+	-> Semilla 78023388 | Coste: 3098626 | Tiempo: 1304 ms | Desviacion: 1282,73%
+	   Media: 3007299,00 (desviacion 1241,98%) | Desv. tipica: 98440,54 | Tiempo medio: 1347 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E3_kB2_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 13175 | Tiempo: 350 ms | Desviacion: 410,86%
+	-> Semilla 77433388 | Coste: 11135 | Tiempo: 350 ms | Desviacion: 331,76%
+	-> Semilla 78023388 | Coste: 11608 | Tiempo: 356 ms | Desviacion: 350,10%
+	   Media: 11972,67 (desviacion 364,24%) | Desv. tipica: 1067,77 | Tiempo medio: 352 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 14862 | Tiempo: 168 ms | Desviacion: 143,24%
+	-> Semilla 77433388 | Coste: 12461 | Tiempo: 168 ms | Desviacion: 103,94%
+	-> Semilla 78023388 | Coste: 14639 | Tiempo: 169 ms | Desviacion: 139,59%
+	   Media: 13987,33 (desviacion 128,93%) | Desv. tipica: 1326,54 | Tiempo medio: 169 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 167094 | Tiempo: 185 ms | Desviacion: 185,45%
+	-> Semilla 77433388 | Coste: 186348 | Tiempo: 182 ms | Desviacion: 218,34%
+	-> Semilla 78023388 | Coste: 196722 | Tiempo: 182 ms | Desviacion: 236,06%
+	   Media: 183388,00 (desviacion 213,29%) | Desv. tipica: 15034,15 | Tiempo medio: 183 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 47913833 | Tiempo: 48505 ms | Desviacion: 7325,76%
+	-> Semilla 77433388 | Coste: 47263315 | Tiempo: 48025 ms | Desviacion: 7224,94%
+	-> Semilla 78023388 | Coste: 48093304 | Tiempo: 47820 ms | Desviacion: 7353,58%
+	   Media: 47756817,33 (desviacion 7301,43%) | Desv. tipica: 436704,56 | Tiempo medio: 48117 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3146924 | Tiempo: 1425 ms | Desviacion: 1304,29%
+	-> Semilla 77433388 | Coste: 3130203 | Tiempo: 1400 ms | Desviacion: 1296,83%
+	-> Semilla 78023388 | Coste: 3142204 | Tiempo: 1441 ms | Desviacion: 1302,18%
+	   Media: 3139777,00 (desviacion 1301,10%) | Desv. tipica: 8620,66 | Tiempo medio: 1422 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E3_kB3_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 13431 | Tiempo: 338 ms | Desviacion: 420,78%
+	-> Semilla 77433388 | Coste: 12823 | Tiempo: 342 ms | Desviacion: 397,21%
+	-> Semilla 78023388 | Coste: 12707 | Tiempo: 338 ms | Desviacion: 392,71%
+	   Media: 12987,00 (desviacion 403,57%) | Desv. tipica: 388,87 | Tiempo medio: 339 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15928 | Tiempo: 160 ms | Desviacion: 160,69%
+	-> Semilla 77433388 | Coste: 14009 | Tiempo: 163 ms | Desviacion: 129,28%
+	-> Semilla 78023388 | Coste: 15678 | Tiempo: 167 ms | Desviacion: 156,60%
+	   Media: 15205,00 (desviacion 148,85%) | Desv. tipica: 1043,28 | Tiempo medio: 163 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 224058 | Tiempo: 183 ms | Desviacion: 282,76%
+	-> Semilla 77433388 | Coste: 220353 | Tiempo: 179 ms | Desviacion: 276,43%
+	-> Semilla 78023388 | Coste: 262547 | Tiempo: 177 ms | Desviacion: 348,51%
+	   Media: 235652,67 (desviacion 302,57%) | Desv. tipica: 23364,73 | Tiempo medio: 180 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 45591104 | Tiempo: 41471 ms | Desviacion: 6965,78%
+	-> Semilla 77433388 | Coste: 46025238 | Tiempo: 41893 ms | Desviacion: 7033,06%
+	-> Semilla 78023388 | Coste: 45625413 | Tiempo: 44595 ms | Desviacion: 6971,10%
+	   Media: 45747251,67 (desviacion 6989,98%) | Desv. tipica: 241353,64 | Tiempo medio: 42653 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 2870947 | Tiempo: 1318 ms | Desviacion: 1181,14%
+	-> Semilla 77433388 | Coste: 3124612 | Tiempo: 1338 ms | Desviacion: 1294,33%
+	-> Semilla 78023388 | Coste: 3077476 | Tiempo: 1335 ms | Desviacion: 1273,30%
+	   Media: 3024345,00 (desviacion 1249,59%) | Desv. tipica: 134920,94 | Tiempo medio: 1331 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E3_kB2_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12283 | Tiempo: 353 ms | Desviacion: 376,27%
+	-> Semilla 77433388 | Coste: 13338 | Tiempo: 351 ms | Desviacion: 417,18%
+	-> Semilla 78023388 | Coste: 11517 | Tiempo: 358 ms | Desviacion: 346,57%
+	   Media: 12379,33 (desviacion 380,01%) | Desv. tipica: 914,31 | Tiempo medio: 354 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 14210 | Tiempo: 170 ms | Desviacion: 132,57%
+	-> Semilla 77433388 | Coste: 15630 | Tiempo: 165 ms | Desviacion: 155,81%
+	-> Semilla 78023388 | Coste: 12901 | Tiempo: 169 ms | Desviacion: 111,15%
+	   Media: 14247,00 (desviacion 133,18%) | Desv. tipica: 1364,88 | Tiempo medio: 168 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 208171 | Tiempo: 183 ms | Desviacion: 255,62%
+	-> Semilla 77433388 | Coste: 188707 | Tiempo: 182 ms | Desviacion: 222,37%
+	-> Semilla 78023388 | Coste: 195560 | Tiempo: 182 ms | Desviacion: 234,08%
+	   Media: 197479,33 (desviacion 237,36%) | Desv. tipica: 9872,93 | Tiempo medio: 183 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 47090013 | Tiempo: 47842 ms | Desviacion: 7198,08%
+	-> Semilla 77433388 | Coste: 47613319 | Tiempo: 44164 ms | Desviacion: 7279,19%
+	-> Semilla 78023388 | Coste: 47351647 | Tiempo: 45815 ms | Desviacion: 7238,63%
+	   Media: 47351659,67 (desviacion 7238,63%) | Desv. tipica: 261653,00 | Tiempo medio: 45941 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3273805 | Tiempo: 1861 ms | Desviacion: 1360,91%
+	-> Semilla 77433388 | Coste: 2975977 | Tiempo: 1819 ms | Desviacion: 1228,00%
+	-> Semilla 78023388 | Coste: 3019389 | Tiempo: 3144 ms | Desviacion: 1247,38%
+	   Media: 3089723,67 (desviacion 1278,76%) | Desv. tipica: 160890,04 | Tiempo medio: 2275 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_OX2_E3_kB3_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12382 | Tiempo: 346 ms | Desviacion: 380,11%
+	-> Semilla 77433388 | Coste: 13407 | Tiempo: 511 ms | Desviacion: 419,85%
+	-> Semilla 78023388 | Coste: 12815 | Tiempo: 376 ms | Desviacion: 396,90%
+	   Media: 12868,00 (desviacion 398,95%) | Desv. tipica: 514,55 | Tiempo medio: 411 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 17263 | Tiempo: 163 ms | Desviacion: 182,54%
+	-> Semilla 77433388 | Coste: 16464 | Tiempo: 162 ms | Desviacion: 169,46%
+	-> Semilla 78023388 | Coste: 16072 | Tiempo: 172 ms | Desviacion: 163,04%
+	   Media: 16599,67 (desviacion 171,68%) | Desv. tipica: 606,98 | Tiempo medio: 166 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 247138 | Tiempo: 205 ms | Desviacion: 322,19%
+	-> Semilla 77433388 | Coste: 219631 | Tiempo: 629 ms | Desviacion: 275,20%
+	-> Semilla 78023388 | Coste: 241329 | Tiempo: 489 ms | Desviacion: 312,27%
+	   Media: 236032,67 (desviacion 303,22%) | Desv. tipica: 14498,18 | Tiempo medio: 441 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 45813356 | Tiempo: 45382 ms | Desviacion: 7000,23%
+	-> Semilla 77433388 | Coste: 45577437 | Tiempo: 41291 ms | Desviacion: 6963,66%
+	-> Semilla 78023388 | Coste: 45457200 | Tiempo: 44199 ms | Desviacion: 6945,03%
+	   Media: 45615997,67 (desviacion 6969,64%) | Desv. tipica: 181182,14 | Tiempo medio: 43624 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 2893889 | Tiempo: 1324 ms | Desviacion: 1191,37%
+	-> Semilla 77433388 | Coste: 3183399 | Tiempo: 1302 ms | Desviacion: 1320,56%
+	-> Semilla 78023388 | Coste: 3127283 | Tiempo: 1480 ms | Desviacion: 1295,52%
+	   Media: 3068190,33 (desviacion 1269,15%) | Desv. tipica: 153534,91 | Tiempo medio: 1368 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E1_kB2_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 13178 | Tiempo: 117 ms | Desviacion: 410,97%
+	-> Semilla 77433388 | Coste: 12295 | Tiempo: 87 ms | Desviacion: 376,74%
+	-> Semilla 78023388 | Coste: 12784 | Tiempo: 89 ms | Desviacion: 395,70%
+	   Media: 12752,33 (desviacion 394,47%) | Desv. tipica: 442,35 | Tiempo medio: 98 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 16294 | Tiempo: 48 ms | Desviacion: 166,68%
+	-> Semilla 77433388 | Coste: 15520 | Tiempo: 48 ms | Desviacion: 154,01%
+	-> Semilla 78023388 | Coste: 15457 | Tiempo: 50 ms | Desviacion: 152,98%
+	   Media: 15757,00 (desviacion 157,89%) | Desv. tipica: 466,12 | Tiempo medio: 48 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 265066 | Tiempo: 52 ms | Desviacion: 352,82%
+	-> Semilla 77433388 | Coste: 273743 | Tiempo: 50 ms | Desviacion: 367,64%
+	-> Semilla 78023388 | Coste: 240093 | Tiempo: 51 ms | Desviacion: 310,16%
+	   Media: 259634,00 (desviacion 343,54%) | Desv. tipica: 17470,28 | Tiempo medio: 51 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 47219332 | Tiempo: 6886 ms | Desviacion: 7218,13%
+	-> Semilla 77433388 | Coste: 47190188 | Tiempo: 6292 ms | Desviacion: 7213,61%
+	-> Semilla 78023388 | Coste: 47698213 | Tiempo: 6492 ms | Desviacion: 7292,34%
+	   Media: 47369244,33 (desviacion 7241,36%) | Desv. tipica: 285267,65 | Tiempo medio: 6557 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3268426 | Tiempo: 337 ms | Desviacion: 1358,51%
+	-> Semilla 77433388 | Coste: 3208049 | Tiempo: 345 ms | Desviacion: 1331,56%
+	-> Semilla 78023388 | Coste: 3172524 | Tiempo: 337 ms | Desviacion: 1315,71%
+	   Media: 3216333,00 (desviacion 1335,26%) | Desv. tipica: 48484,71 | Tiempo medio: 340 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E1_kB3_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12330 | Tiempo: 88 ms | Desviacion: 378,09%
+	-> Semilla 77433388 | Coste: 11978 | Tiempo: 89 ms | Desviacion: 364,44%
+	-> Semilla 78023388 | Coste: 11742 | Tiempo: 97 ms | Desviacion: 355,29%
+	   Media: 12016,67 (desviacion 365,94%) | Desv. tipica: 295,90 | Tiempo medio: 91 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 16014 | Tiempo: 49 ms | Desviacion: 162,09%
+	-> Semilla 77433388 | Coste: 15484 | Tiempo: 50 ms | Desviacion: 153,42%
+	-> Semilla 78023388 | Coste: 15728 | Tiempo: 49 ms | Desviacion: 157,41%
+	   Media: 15742,00 (desviacion 157,64%) | Desv. tipica: 265,28 | Tiempo medio: 49 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 230179 | Tiempo: 54 ms | Desviacion: 293,22%
+	-> Semilla 77433388 | Coste: 227441 | Tiempo: 64 ms | Desviacion: 288,54%
+	-> Semilla 78023388 | Coste: 234172 | Tiempo: 59 ms | Desviacion: 300,04%
+	   Media: 230597,33 (desviacion 293,93%) | Desv. tipica: 3384,94 | Tiempo medio: 59 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46350819 | Tiempo: 6963 ms | Desviacion: 7083,52%
+	-> Semilla 77433388 | Coste: 46874371 | Tiempo: 6660 ms | Desviacion: 7164,66%
+	-> Semilla 78023388 | Coste: 46603869 | Tiempo: 6382 ms | Desviacion: 7122,74%
+	   Media: 46609686,33 (desviacion 7123,64%) | Desv. tipica: 261824,47 | Tiempo medio: 6668 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3006727 | Tiempo: 342 ms | Desviacion: 1241,73%
+	-> Semilla 77433388 | Coste: 2981085 | Tiempo: 335 ms | Desviacion: 1230,28%
+	-> Semilla 78023388 | Coste: 2954937 | Tiempo: 331 ms | Desviacion: 1218,61%
+	   Media: 2980916,33 (desviacion 1230,21%) | Desv. tipica: 25895,41 | Tiempo medio: 336 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E1_kB2_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 13332 | Tiempo: 88 ms | Desviacion: 416,94%
+	-> Semilla 77433388 | Coste: 12624 | Tiempo: 88 ms | Desviacion: 389,49%
+	-> Semilla 78023388 | Coste: 12320 | Tiempo: 91 ms | Desviacion: 377,70%
+	   Media: 12758,67 (desviacion 394,71%) | Desv. tipica: 519,27 | Tiempo medio: 89 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15040 | Tiempo: 49 ms | Desviacion: 146,15%
+	-> Semilla 77433388 | Coste: 14615 | Tiempo: 49 ms | Desviacion: 139,20%
+	-> Semilla 78023388 | Coste: 16569 | Tiempo: 50 ms | Desviacion: 171,18%
+	   Media: 15408,00 (desviacion 152,18%) | Desv. tipica: 1027,67 | Tiempo medio: 49 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 237249 | Tiempo: 54 ms | Desviacion: 305,30%
+	-> Semilla 77433388 | Coste: 265846 | Tiempo: 52 ms | Desviacion: 354,15%
+	-> Semilla 78023388 | Coste: 227360 | Tiempo: 53 ms | Desviacion: 288,40%
+	   Media: 243485,00 (desviacion 315,95%) | Desv. tipica: 19986,47 | Tiempo medio: 53 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46791753 | Tiempo: 7131 ms | Desviacion: 7151,86%
+	-> Semilla 77433388 | Coste: 46948470 | Tiempo: 6652 ms | Desviacion: 7176,15%
+	-> Semilla 78023388 | Coste: 46942809 | Tiempo: 7190 ms | Desviacion: 7175,27%
+	   Media: 46894344,00 (desviacion 7167,76%) | Desv. tipica: 88891,49 | Tiempo medio: 6991 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3210076 | Tiempo: 345 ms | Desviacion: 1332,47%
+	-> Semilla 77433388 | Coste: 3226512 | Tiempo: 341 ms | Desviacion: 1339,80%
+	-> Semilla 78023388 | Coste: 3188976 | Tiempo: 348 ms | Desviacion: 1323,05%
+	   Media: 3208521,33 (desviacion 1331,77%) | Desv. tipica: 18816,23 | Tiempo medio: 345 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E1_kB3_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12863 | Tiempo: 106 ms | Desviacion: 398,76%
+	-> Semilla 77433388 | Coste: 12462 | Tiempo: 104 ms | Desviacion: 383,21%
+	-> Semilla 78023388 | Coste: 12412 | Tiempo: 103 ms | Desviacion: 381,27%
+	   Media: 12579,00 (desviacion 387,75%) | Desv. tipica: 247,22 | Tiempo medio: 104 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15044 | Tiempo: 54 ms | Desviacion: 146,22%
+	-> Semilla 77433388 | Coste: 15553 | Tiempo: 54 ms | Desviacion: 154,55%
+	-> Semilla 78023388 | Coste: 16112 | Tiempo: 58 ms | Desviacion: 163,70%
+	   Media: 15569,67 (desviacion 154,82%) | Desv. tipica: 534,20 | Tiempo medio: 56 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 242388 | Tiempo: 52 ms | Desviacion: 314,08%
+	-> Semilla 77433388 | Coste: 237373 | Tiempo: 52 ms | Desviacion: 305,51%
+	-> Semilla 78023388 | Coste: 235952 | Tiempo: 58 ms | Desviacion: 303,08%
+	   Media: 238571,00 (desviacion 307,56%) | Desv. tipica: 3381,11 | Tiempo medio: 54 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46379111 | Tiempo: 7078 ms | Desviacion: 7087,91%
+	-> Semilla 77433388 | Coste: 46659658 | Tiempo: 7251 ms | Desviacion: 7131,39%
+	-> Semilla 78023388 | Coste: 46690002 | Tiempo: 6511 ms | Desviacion: 7136,09%
+	   Media: 46576257,00 (desviacion 7118,46%) | Desv. tipica: 171406,24 | Tiempo medio: 6947 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3108971 | Tiempo: 357 ms | Desviacion: 1287,35%
+	-> Semilla 77433388 | Coste: 3007988 | Tiempo: 342 ms | Desviacion: 1242,29%
+	-> Semilla 78023388 | Coste: 3126503 | Tiempo: 463 ms | Desviacion: 1295,17%
+	   Media: 3081154,00 (desviacion 1274,94%) | Desv. tipica: 63967,10 | Tiempo medio: 387 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E2_kB2_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 13510 | Tiempo: 182 ms | Desviacion: 423,85%
+	-> Semilla 77433388 | Coste: 12387 | Tiempo: 180 ms | Desviacion: 380,30%
+	-> Semilla 78023388 | Coste: 13482 | Tiempo: 259 ms | Desviacion: 422,76%
+	   Media: 13126,33 (desviacion 408,97%) | Desv. tipica: 640,43 | Tiempo medio: 207 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 16132 | Tiempo: 129 ms | Desviacion: 164,03%
+	-> Semilla 77433388 | Coste: 15663 | Tiempo: 126 ms | Desviacion: 156,35%
+	-> Semilla 78023388 | Coste: 16654 | Tiempo: 122 ms | Desviacion: 172,57%
+	   Media: 16149,67 (desviacion 164,32%) | Desv. tipica: 495,74 | Tiempo medio: 126 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 252349 | Tiempo: 73 ms | Desviacion: 331,09%
+	-> Semilla 77433388 | Coste: 234223 | Tiempo: 67 ms | Desviacion: 300,13%
+	-> Semilla 78023388 | Coste: 225771 | Tiempo: 69 ms | Desviacion: 285,69%
+	   Media: 237447,67 (desviacion 305,64%) | Desv. tipica: 13579,26 | Tiempo medio: 70 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46869692 | Tiempo: 7371 ms | Desviacion: 7163,94%
+	-> Semilla 77433388 | Coste: 47245657 | Tiempo: 6464 ms | Desviacion: 7222,21%
+	-> Semilla 78023388 | Coste: 47138499 | Tiempo: 6716 ms | Desviacion: 7205,60%
+	   Media: 47084616,00 (desviacion 7197,25%) | Desv. tipica: 193687,77 | Tiempo medio: 6850 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3087606 | Tiempo: 332 ms | Desviacion: 1277,82%
+	-> Semilla 77433388 | Coste: 3165641 | Tiempo: 344 ms | Desviacion: 1312,64%
+	-> Semilla 78023388 | Coste: 3097119 | Tiempo: 333 ms | Desviacion: 1282,06%
+	   Media: 3116788,67 (desviacion 1290,84%) | Desv. tipica: 42573,90 | Tiempo medio: 336 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E2_kB3_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 11782 | Tiempo: 87 ms | Desviacion: 356,84%
+	-> Semilla 77433388 | Coste: 12511 | Tiempo: 88 ms | Desviacion: 385,11%
+	-> Semilla 78023388 | Coste: 11605 | Tiempo: 91 ms | Desviacion: 349,98%
+	   Media: 11966,00 (desviacion 363,98%) | Desv. tipica: 480,21 | Tiempo medio: 89 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15464 | Tiempo: 49 ms | Desviacion: 153,09%
+	-> Semilla 77433388 | Coste: 14920 | Tiempo: 47 ms | Desviacion: 144,19%
+	-> Semilla 78023388 | Coste: 14601 | Tiempo: 47 ms | Desviacion: 138,97%
+	   Media: 14995,00 (desviacion 145,42%) | Desv. tipica: 436,36 | Tiempo medio: 47 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 235400 | Tiempo: 51 ms | Desviacion: 302,14%
+	-> Semilla 77433388 | Coste: 219423 | Tiempo: 54 ms | Desviacion: 274,84%
+	-> Semilla 78023388 | Coste: 221857 | Tiempo: 52 ms | Desviacion: 279,00%
+	   Media: 225560,00 (desviacion 285,33%) | Desv. tipica: 8608,15 | Tiempo medio: 52 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46605424 | Tiempo: 6887 ms | Desviacion: 7122,98%
+	-> Semilla 77433388 | Coste: 46488019 | Tiempo: 6452 ms | Desviacion: 7104,79%
+	-> Semilla 78023388 | Coste: 46732770 | Tiempo: 6297 ms | Desviacion: 7142,72%
+	   Media: 46608737,67 (desviacion 7123,50%) | Desv. tipica: 122409,14 | Tiempo medio: 6546 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3048813 | Tiempo: 326 ms | Desviacion: 1260,51%
+	-> Semilla 77433388 | Coste: 3066161 | Tiempo: 332 ms | Desviacion: 1268,25%
+	-> Semilla 78023388 | Coste: 2983988 | Tiempo: 332 ms | Desviacion: 1231,58%
+	   Media: 3032987,33 (desviacion 1253,44%) | Desv. tipica: 43312,11 | Tiempo medio: 330 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E2_kB2_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 13359 | Tiempo: 89 ms | Desviacion: 417,99%
+	-> Semilla 77433388 | Coste: 13201 | Tiempo: 88 ms | Desviacion: 411,87%
+	-> Semilla 78023388 | Coste: 13183 | Tiempo: 94 ms | Desviacion: 411,17%
+	   Media: 13247,67 (desviacion 413,67%) | Desv. tipica: 96,84 | Tiempo medio: 90 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15274 | Tiempo: 50 ms | Desviacion: 149,98%
+	-> Semilla 77433388 | Coste: 15898 | Tiempo: 49 ms | Desviacion: 160,20%
+	-> Semilla 78023388 | Coste: 15414 | Tiempo: 48 ms | Desviacion: 152,27%
+	   Media: 15528,67 (desviacion 154,15%) | Desv. tipica: 327,42 | Tiempo medio: 49 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 238235 | Tiempo: 52 ms | Desviacion: 306,98%
+	-> Semilla 77433388 | Coste: 257902 | Tiempo: 54 ms | Desviacion: 340,58%
+	-> Semilla 78023388 | Coste: 241006 | Tiempo: 54 ms | Desviacion: 311,72%
+	   Media: 245714,33 (desviacion 319,76%) | Desv. tipica: 10645,38 | Tiempo medio: 53 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46731864 | Tiempo: 7072 ms | Desviacion: 7142,58%
+	-> Semilla 77433388 | Coste: 47102560 | Tiempo: 6337 ms | Desviacion: 7200,03%
+	-> Semilla 78023388 | Coste: 47221254 | Tiempo: 6514 ms | Desviacion: 7218,42%
+	   Media: 47018559,33 (desviacion 7187,01%) | Desv. tipica: 255279,70 | Tiempo medio: 6641 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3185704 | Tiempo: 331 ms | Desviacion: 1321,59%
+	-> Semilla 77433388 | Coste: 3140138 | Tiempo: 332 ms | Desviacion: 1301,26%
+	-> Semilla 78023388 | Coste: 3260943 | Tiempo: 345 ms | Desviacion: 1355,17%
+	   Media: 3195595,00 (desviacion 1326,01%) | Desv. tipica: 61006,85 | Tiempo medio: 336 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E2_kB3_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12436 | Tiempo: 85 ms | Desviacion: 382,20%
+	-> Semilla 77433388 | Coste: 12632 | Tiempo: 99 ms | Desviacion: 389,80%
+	-> Semilla 78023388 | Coste: 12382 | Tiempo: 94 ms | Desviacion: 380,11%
+	   Media: 12483,33 (desviacion 384,04%) | Desv. tipica: 131,55 | Tiempo medio: 93 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15676 | Tiempo: 49 ms | Desviacion: 156,56%
+	-> Semilla 77433388 | Coste: 14457 | Tiempo: 49 ms | Desviacion: 136,61%
+	-> Semilla 78023388 | Coste: 15393 | Tiempo: 46 ms | Desviacion: 151,93%
+	   Media: 15175,33 (desviacion 148,37%) | Desv. tipica: 637,98 | Tiempo medio: 48 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 218836 | Tiempo: 53 ms | Desviacion: 273,84%
+	-> Semilla 77433388 | Coste: 234534 | Tiempo: 59 ms | Desviacion: 300,66%
+	-> Semilla 78023388 | Coste: 243265 | Tiempo: 59 ms | Desviacion: 315,57%
+	   Media: 232211,67 (desviacion 296,69%) | Desv. tipica: 12378,97 | Tiempo medio: 57 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46593395 | Tiempo: 7066 ms | Desviacion: 7121,12%
+	-> Semilla 77433388 | Coste: 46315143 | Tiempo: 6722 ms | Desviacion: 7077,99%
+	-> Semilla 78023388 | Coste: 46604959 | Tiempo: 6255 ms | Desviacion: 7122,91%
+	   Media: 46504499,00 (desviacion 7107,34%) | Desv. tipica: 164089,01 | Tiempo medio: 6681 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3009913 | Tiempo: 328 ms | Desviacion: 1243,15%
+	-> Semilla 77433388 | Coste: 3011764 | Tiempo: 331 ms | Desviacion: 1243,97%
+	-> Semilla 78023388 | Coste: 3041216 | Tiempo: 332 ms | Desviacion: 1257,12%
+	   Media: 3020964,33 (desviacion 1248,08%) | Desv. tipica: 17562,86 | Tiempo medio: 330 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E3_kB2_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 12821 | Tiempo: 88 ms | Desviacion: 397,13%
+	-> Semilla 77433388 | Coste: 13635 | Tiempo: 89 ms | Desviacion: 428,69%
+	-> Semilla 78023388 | Coste: 13533 | Tiempo: 93 ms | Desviacion: 424,74%
+	   Media: 13329,67 (desviacion 416,85%) | Desv. tipica: 443,46 | Tiempo medio: 90 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 16081 | Tiempo: 51 ms | Desviacion: 163,19%
+	-> Semilla 77433388 | Coste: 15744 | Tiempo: 48 ms | Desviacion: 157,68%
+	-> Semilla 78023388 | Coste: 16531 | Tiempo: 48 ms | Desviacion: 170,56%
+	   Media: 16118,67 (desviacion 163,81%) | Desv. tipica: 394,85 | Tiempo medio: 49 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 237115 | Tiempo: 53 ms | Desviacion: 305,07%
+	-> Semilla 77433388 | Coste: 247682 | Tiempo: 54 ms | Desviacion: 323,12%
+	-> Semilla 78023388 | Coste: 238999 | Tiempo: 54 ms | Desviacion: 308,29%
+	   Media: 241265,33 (desviacion 312,16%) | Desv. tipica: 5636,27 | Tiempo medio: 54 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46906274 | Tiempo: 7256 ms | Desviacion: 7169,61%
+	-> Semilla 77433388 | Coste: 47475165 | Tiempo: 6425 ms | Desviacion: 7257,78%
+	-> Semilla 78023388 | Coste: 47335284 | Tiempo: 6660 ms | Desviacion: 7236,10%
+	   Media: 47238907,67 (desviacion 7221,16%) | Desv. tipica: 296438,09 | Tiempo medio: 6781 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3100187 | Tiempo: 317 ms | Desviacion: 1283,43%
+	-> Semilla 77433388 | Coste: 3078158 | Tiempo: 334 ms | Desviacion: 1273,60%
+	-> Semilla 78023388 | Coste: 3211378 | Tiempo: 338 ms | Desviacion: 1333,05%
+	   Media: 3129907,67 (desviacion 1296,69%) | Desv. tipica: 71409,95 | Tiempo medio: 330 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E3_kB3_kW2 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 11571 | Tiempo: 87 ms | Desviacion: 348,66%
+	-> Semilla 77433388 | Coste: 12494 | Tiempo: 88 ms | Desviacion: 384,45%
+	-> Semilla 78023388 | Coste: 11815 | Tiempo: 88 ms | Desviacion: 358,12%
+	   Media: 11960,00 (desviacion 363,75%) | Desv. tipica: 478,28 | Tiempo medio: 87 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15005 | Tiempo: 47 ms | Desviacion: 145,58%
+	-> Semilla 77433388 | Coste: 16636 | Tiempo: 48 ms | Desviacion: 172,27%
+	-> Semilla 78023388 | Coste: 15607 | Tiempo: 47 ms | Desviacion: 155,43%
+	   Media: 15749,33 (desviacion 157,76%) | Desv. tipica: 824,76 | Tiempo medio: 47 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 264695 | Tiempo: 50 ms | Desviacion: 352,18%
+	-> Semilla 77433388 | Coste: 247312 | Tiempo: 53 ms | Desviacion: 322,49%
+	-> Semilla 78023388 | Coste: 245075 | Tiempo: 51 ms | Desviacion: 318,67%
+	   Media: 252360,67 (desviacion 331,11%) | Desv. tipica: 10740,25 | Tiempo medio: 51 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46580409 | Tiempo: 7127 ms | Desviacion: 7119,11%
+	-> Semilla 77433388 | Coste: 46645966 | Tiempo: 6478 ms | Desviacion: 7129,27%
+	-> Semilla 78023388 | Coste: 46720146 | Tiempo: 6307 ms | Desviacion: 7140,76%
+	   Media: 46648840,33 (desviacion 7129,71%) | Desv. tipica: 69912,83 | Tiempo medio: 6637 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3051609 | Tiempo: 329 ms | Desviacion: 1261,75%
+	-> Semilla 77433388 | Coste: 3037608 | Tiempo: 335 ms | Desviacion: 1255,51%
+	-> Semilla 78023388 | Coste: 3054221 | Tiempo: 332 ms | Desviacion: 1262,92%
+	   Media: 3047812,67 (desviacion 1260,06%) | Desv. tipica: 8933,48 | Tiempo medio: 332 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E3_kB2_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 13241 | Tiempo: 89 ms | Desviacion: 413,42%
+	-> Semilla 77433388 | Coste: 13487 | Tiempo: 88 ms | Desviacion: 422,95%
+	-> Semilla 78023388 | Coste: 13767 | Tiempo: 93 ms | Desviacion: 433,81%
+	   Media: 13498,33 (desviacion 423,39%) | Desv. tipica: 263,18 | Tiempo medio: 90 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15752 | Tiempo: 49 ms | Desviacion: 157,81%
+	-> Semilla 77433388 | Coste: 16344 | Tiempo: 49 ms | Desviacion: 167,50%
+	-> Semilla 78023388 | Coste: 15872 | Tiempo: 49 ms | Desviacion: 159,77%
+	   Media: 15989,33 (desviacion 161,69%) | Desv. tipica: 312,96 | Tiempo medio: 49 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 255887 | Tiempo: 53 ms | Desviacion: 337,14%
+	-> Semilla 77433388 | Coste: 231701 | Tiempo: 55 ms | Desviacion: 295,82%
+	-> Semilla 78023388 | Coste: 257019 | Tiempo: 54 ms | Desviacion: 339,07%
+	   Media: 248202,33 (desviacion 324,01%) | Desv. tipica: 14301,78 | Tiempo medio: 54 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46860372 | Tiempo: 7048 ms | Desviacion: 7162,49%
+	-> Semilla 77433388 | Coste: 47318261 | Tiempo: 6353 ms | Desviacion: 7233,46%
+	-> Semilla 78023388 | Coste: 46881340 | Tiempo: 6381 ms | Desviacion: 7165,74%
+	   Media: 47019991,00 (desviacion 7187,23%) | Desv. tipica: 258522,07 | Tiempo medio: 6594 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3210928 | Tiempo: 328 ms | Desviacion: 1332,85%
+	-> Semilla 77433388 | Coste: 3221969 | Tiempo: 455 ms | Desviacion: 1337,78%
+	-> Semilla 78023388 | Coste: 3122818 | Tiempo: 340 ms | Desviacion: 1293,53%
+	   Media: 3185238,33 (desviacion 1321,38%) | Desv. tipica: 54338,75 | Tiempo medio: 375 ms
+-----------------------------------------------------------------------
+
+---------------------- EVALUACION GEN_MOC_E3_kB3_kW3 ----------------------
+Archivo a280.tsp
+	-> Semilla 78026515 | Coste: 11773 | Tiempo: 84 ms | Desviacion: 356,49%
+	-> Semilla 77433388 | Coste: 12366 | Tiempo: 84 ms | Desviacion: 379,49%
+	-> Semilla 78023388 | Coste: 11999 | Tiempo: 85 ms | Desviacion: 365,26%
+	   Media: 12046,00 (desviacion 367,08%) | Desv. tipica: 299,28 | Tiempo medio: 84 ms
+Archivo ch130.tsp
+	-> Semilla 78026515 | Coste: 15056 | Tiempo: 48 ms | Desviacion: 146,42%
+	-> Semilla 77433388 | Coste: 16020 | Tiempo: 45 ms | Desviacion: 162,19%
+	-> Semilla 78023388 | Coste: 16290 | Tiempo: 46 ms | Desviacion: 166,61%
+	   Media: 15788,67 (desviacion 158,41%) | Desv. tipica: 648,71 | Tiempo medio: 46 ms
+Archivo pr144.tsp
+	-> Semilla 78026515 | Coste: 233211 | Tiempo: 49 ms | Desviacion: 298,40%
+	-> Semilla 77433388 | Coste: 245349 | Tiempo: 53 ms | Desviacion: 319,13%
+	-> Semilla 78023388 | Coste: 251264 | Tiempo: 134 ms | Desviacion: 329,24%
+	   Media: 243274,67 (desviacion 315,59%) | Desv. tipica: 9203,52 | Tiempo medio: 79 ms
+Archivo d18512.tsp
+	-> Semilla 78026515 | Coste: 46468969 | Tiempo: 7082 ms | Desviacion: 7101,83%
+	-> Semilla 77433388 | Coste: 46830684 | Tiempo: 6358 ms | Desviacion: 7157,89%
+	-> Semilla 78023388 | Coste: 46565810 | Tiempo: 7744 ms | Desviacion: 7116,84%
+	   Media: 46621821,00 (desviacion 7125,52%) | Desv. tipica: 187249,46 | Tiempo medio: 7061 ms
+Archivo u1060.tsp
+	-> Semilla 78026515 | Coste: 3089694 | Tiempo: 332 ms | Desviacion: 1278,75%
+	-> Semilla 77433388 | Coste: 2989625 | Tiempo: 332 ms | Desviacion: 1234,09%
+	-> Semilla 78023388 | Coste: 3108165 | Tiempo: 332 ms | Desviacion: 1286,99%
+	   Media: 3062494,67 (desviacion 1266,61%) | Desv. tipica: 63779,19 | Tiempo medio: 332 ms
+-----------------------------------------------------------------------
+
+Process finished with exit code 0
